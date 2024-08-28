@@ -36,14 +36,8 @@ import {useRouter} from "vue-router";
 
 const router = useRouter()
 const selectKey = router.currentRoute.value.path
-console.log(selectKey)
-const onClickMenuItem = (key: String) => {
-    router.push(key)
-}
 const emits = defineEmits(['collapse'])
-const onCollapse = (value: boolean) => {
-    emits('collapse', value)
-}
+
 
 const menus = [
     {
@@ -83,8 +77,15 @@ const menus = [
         "path": "/login"
     },
 ]
+const newMenus = buildMenuTree(menus)
 
-function buildMenuTree(menus) {
+const onClickMenuItem = (key: String) => {
+    router.push(key)
+}
+const onCollapse = (value: boolean) => {
+    emits('collapse', value)
+}
+const buildMenuTree = (menus) => {
     const topLevelMenus = menus.filter(menu => menu.parent === null);
     const buildTree = (menu) => {
         const children = [];
@@ -98,7 +99,7 @@ function buildMenuTree(menus) {
     return topLevelMenus.map(menu => buildTree(menu));
 }
 
-const newMenus = buildMenuTree(menus)
+
 </script>
 
 <style scoped lang="less">
