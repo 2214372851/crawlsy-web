@@ -1,4 +1,5 @@
 export default {
     title: '登录',
-    layout: false
+    // layout: false,
+    layout: true,
 }
