@@ -33,6 +33,7 @@
 <script setup lang="ts">
 import {defineEmits} from 'vue'
 import {useRouter} from "vue-router";
+import type {MenuItem} from "@/types";
 
 const router = useRouter()
 const selectKey = router.currentRoute.value.path
@@ -79,16 +80,16 @@ const menus = [
 ]
 
 
-const onClickMenuItem = (key: String) => {
-    router.push(key)
+const onClickMenuItem = (key: string) => {
+    router.push({path: key})
 }
 const onCollapse = (value: boolean) => {
     emits('collapse', value)
 }
-const buildMenuTree = (menus) => {
+const buildMenuTree = (menus: MenuItem[]) => {
     const topLevelMenus = menus.filter(menu => menu.parent === null);
-    const buildTree = (menu) => {
-        const children = [];
+    const buildTree = (menu: MenuItem) => {
+        const children: MenuItem[] = [];
         menus.forEach(child => {
             if (child.parent === menu.id) {
                 children.push(buildTree(child));

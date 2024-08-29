@@ -68,10 +68,10 @@
 </template>
 
 <script setup lang="ts">
-
 import {onMounted, reactive, ref} from "vue";
 import Cookies from 'js-cookie'
 import {decrypt, encrypt} from "@/utils/aes";
+import axios from "axios";
 
 const form = reactive({
     username: '',
@@ -92,6 +92,14 @@ const handleSubmit = () => {
         Cookies.remove('username')
         Cookies.remove('password')
     }
+    axios({
+        url: 'http://8.153.17.121:8001/api/V1/login/', data: {
+            email: form.username,
+            password: encrypt(form.password)
+        }
+    }).then(res => {
+        console.log(res)
+    })
 }
 const initUserInfo = () => {
     const username = Cookies.get('username') || ''

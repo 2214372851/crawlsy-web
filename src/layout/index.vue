@@ -108,12 +108,7 @@
 import {computed, onMounted, ref} from 'vue'
 import {useRoute} from "vue-router";
 import Menu from "@/components/menu/index.vue"
-
-
-interface BreadcrumbsType {
-    label: string,
-    path: string,
-}
+import type {BreadcrumbItem} from "@/types";
 
 
 const theme = ref('light')
@@ -124,7 +119,7 @@ document.addEventListener('resize', () => {
 const route = useRoute()
 const breadcrumbs = computed(() => {
     let paths = route.path.split('/')
-    let crumbList: [BreadcrumbsType] = []
+    let crumbList: BreadcrumbItem[] = []
     for (let i = 0; i < paths.length; i++) {
         crumbList.push({label: paths[i], path: paths[i]});
     }
