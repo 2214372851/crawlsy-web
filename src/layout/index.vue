@@ -53,6 +53,12 @@
                                 <icon-search/>
                             </template>
                         </a-button>
+                        <a-button @click="handleFullScreen">
+                            <template #icon>
+                                <icon-fullscreen v-if="!fullscreen"/>
+                                <icon-fullscreen-exit v-else/>
+                            </template>
+                        </a-button>
                         <a-popover
                             :content-style="{ padding:'3px', margin: '0px' }">
                             <a-button>
@@ -95,22 +101,27 @@
                 :collapsed="collapsed">
                 <Menu @collapse="onCollapse"/>
             </a-layout-sider>
-            <a-layout style="padding: 0 24px;">
-                <a-layout-content>
-                    <RouterView/>
-                </a-layout-content>
+
+            <a-layout>
+                <a-scrollbar style="overflow: auto;height: calc(100vh - 55px);width: 100%;">
+                    <a-layout-content style="padding: 24px;">
+                        <RouterView/>
+                    </a-layout-content>
+                </a-scrollbar>
+
             </a-layout>
         </a-layout>
     </a-layout>
 </template>
 
 <script setup lang="ts">
-import {computed, onMounted, ref} from 'vue'
+import {computed, onMounted, ref, provide} from 'vue'
 import {useRoute} from "vue-router";
 import Menu from "@/components/menu/index.vue"
 import type {BreadcrumbItem} from "@/types";
+import {THEME_KEY} from 'vue-echarts';
 
-
+const fullscreen = ref(false)
 const theme = ref('light')
 const collapsed = ref(window.innerWidth < 1200)
 document.addEventListener('resize', () => {
@@ -128,13 +139,30 @@ const breadcrumbs = computed(() => {
 const onCollapse = (value: boolean) => {
     collapsed.value = value
 }
+const handleFullScreen = () => {
+    let element = document.documentElement
+    if (fullscreen.value) {
+        if (document.exitFullscreen) {
+            document.exitFullscreen()
+        } else {
+            alert('浏览器不支持')
+        }
+    } else {
+        if (element.requestFullscreen) {
+            element.requestFullscreen()
+        }
+    }
+    fullscreen.value = !fullscreen.value
 
+}
 const switchTopic = () => {
     localStorage.setItem('theme', theme.value)
     if (theme.value === 'dark') {
         document.body.setAttribute('arco-theme', 'dark');
+        provide(THEME_KEY, 'dark')
     } else if (theme.value === 'light') {
         document.body.removeAttribute('arco-theme');
+        provide(THEME_KEY, 'light')
     } else {
         followOs()
     }
@@ -143,8 +171,11 @@ const followOs = () => {
     if (theme.value !== 'system') return
     if (darkThemeMq.matches) {
         document.body.setAttribute('arco-theme', 'dark')
+        provide(THEME_KEY, 'dark')
+        alert('dark')
     } else {
         document.body.removeAttribute('arco-theme');
+        provide(THEME_KEY, 'light')
     }
 }
 const darkThemeMq = window.matchMedia("(prefers-color-scheme: dark)");
