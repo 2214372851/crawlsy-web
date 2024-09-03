@@ -31,7 +31,6 @@
 </template>
 
 <script setup lang="ts">
-import {defineEmits} from 'vue'
 import {useRouter} from "vue-router";
 import type {MenuItem} from "@/types";
 
@@ -54,19 +53,10 @@ const menus = [
         "id": 2,
         "createTime": "2024-07-07 14:08:03",
         "updateTime": "2024-07-07 14:08:03",
-        "parent": 1,
-        "name": "主控台",
-        "icon": "",
-        "path": "/dashboard/console"
-    },
-    {
-        "id": 3,
-        "createTime": "2024-07-07 14:08:03",
-        "updateTime": "2024-07-07 14:08:03",
-        "parent": 1,
-        "name": "仪表盘",
-        "icon": "",
-        "path": "/dashboard/workplace"
+        "parent": null,
+        "name": "节点管理",
+        "icon": "iconStorage",
+        "path": "/node"
     },
     {
         "id": 4,

@@ -1,10 +1,10 @@
+<template>
+节点管理
+</template>
+
 <script setup lang="ts">
 
 </script>
-
-<template>
-    <div>工作台</div>
-</template>
 
 <style scoped lang="less">
 

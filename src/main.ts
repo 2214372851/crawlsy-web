@@ -1,8 +1,9 @@
 import './assets/main.css'
 
 import {createApp} from 'vue'
-import {createPinia} from 'pinia'
+import pinia from "@/stores";
 import ArcoVue from "@arco-design/web-vue";
+// @ts-ignore
 import App from './App.vue'
 import router from './router'
 import '@arco-design/web-vue/dist/arco.css'
@@ -16,7 +17,7 @@ for (const [key, component] of Object.entries(ArcoIconsVue)) {
 app.use(ArcoVue, {
     componentPrefix: 'arco'
 })
-app.use(createPinia())
+app.use(pinia)
 app.use(router)
 
 app.mount('#app')

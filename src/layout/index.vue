@@ -63,8 +63,8 @@
                             :content-style="{ padding:'3px', margin: '0px' }">
                             <a-button>
                                 <template #icon>
-                                    <icon-sun-fill v-if="theme === 'light'"/>
-                                    <icon-moon-fill v-else-if="theme === 'dark'"/>
+                                    <icon-sun-fill v-if="appStore.theme === 'light'"/>
+                                    <icon-moon-fill v-else-if="appStore.theme === 'dark'"/>
                                     <icon-desktop v-else/>
                                 </template>
                             </a-button>
@@ -72,8 +72,8 @@
                                 <a-radio-group
                                     direction="vertical"
                                     type="button"
-                                    v-model:model-value="theme"
-                                    @change="switchTopic">
+                                    v-model:model-value="appStore.theme"
+                                    @change="appStore.toggleTheme">
                                     <a-grid :cols="1">
                                         <a-grid-item>
                                             <a-radio value="light">亮色主题</a-radio>
@@ -82,7 +82,7 @@
                                             <a-radio value="dark">暗色主题</a-radio>
                                         </a-grid-item>
                                         <a-grid-item>
-                                            <a-radio value="system">跟随系统</a-radio>
+                                            <a-radio value="auto">跟随系统</a-radio>
                                         </a-grid-item>
                                     </a-grid>
                                 </a-radio-group>
@@ -115,19 +115,20 @@
 </template>
 
 <script setup lang="ts">
-import {computed, onMounted, ref, provide} from 'vue'
+import {computed, onMounted, ref} from 'vue'
 import {useRoute} from "vue-router";
 import Menu from "@/components/menu/index.vue"
 import type {BreadcrumbItem} from "@/types";
-import {THEME_KEY} from 'vue-echarts';
+import useAppStore from "@/stores/modules/app";
 
+
+const route = useRoute()
+const appStore = useAppStore()
 const fullscreen = ref(false)
-const theme = ref('light')
 const collapsed = ref(window.innerWidth < 1200)
 document.addEventListener('resize', () => {
     collapsed.value = window.innerWidth < 1200
 })
-const route = useRoute()
 const breadcrumbs = computed(() => {
     let paths = route.path.split('/')
     let crumbList: BreadcrumbItem[] = []
@@ -155,39 +156,9 @@ const handleFullScreen = () => {
     fullscreen.value = !fullscreen.value
 
 }
-const switchTopic = () => {
-    localStorage.setItem('theme', theme.value)
-    if (theme.value === 'dark') {
-        document.body.setAttribute('arco-theme', 'dark');
-        provide(THEME_KEY, 'dark')
-    } else if (theme.value === 'light') {
-        document.body.removeAttribute('arco-theme');
-        provide(THEME_KEY, 'light')
-    } else {
-        followOs()
-    }
-}
-const followOs = () => {
-    if (theme.value !== 'system') return
-    if (darkThemeMq.matches) {
-        document.body.setAttribute('arco-theme', 'dark')
-        provide(THEME_KEY, 'dark')
-        alert('dark')
-    } else {
-        document.body.removeAttribute('arco-theme');
-        provide(THEME_KEY, 'light')
-    }
-}
-const darkThemeMq = window.matchMedia("(prefers-color-scheme: dark)");
-onMounted(() => {
-    darkThemeMq.addEventListener('change', followOs)
-    const localTheme = localStorage.getItem('theme')
-    if (localTheme) {
-        theme.value = localTheme
-        switchTopic()
-    }
-})
 
+onMounted(() => {
+})
 </script>
 
 <style lang="less" scoped>
