@@ -32,7 +32,7 @@
 
 <script setup lang="ts">
 import {useRouter} from "vue-router";
-import type {MenuItem} from "@/types";
+import type {MenuItem} from "@/types/global";
 
 const router = useRouter()
 const selectKey = router.currentRoute.value.path

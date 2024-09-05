@@ -19,7 +19,7 @@
                 </template>
                 <template #extra>
                     <a-space size="medium">
-                        <a-button @click="()=>{console.log('cpdd')}">
+                        <a-button @click="()=>{console.log('hello')}">
                             <template #icon>
                                 <icon-search/>
                             </template>
@@ -89,7 +89,7 @@
 import {computed, onMounted, ref} from 'vue'
 import {useRoute} from "vue-router";
 import Menu from "@/components/menu/index.vue"
-import type {BreadcrumbItem} from "@/types";
+import type {BreadcrumbItem} from "@/types/global";
 import useAppStore from "@/stores/modules/app";
 
 
@@ -130,6 +130,12 @@ const handleFullScreen = () => {
 
 onMounted(() => {
 })
+</script>
+
+<script lang="ts">
+export default {
+    name: "Layout"
+}
 </script>
 
 <style lang="less" scoped>

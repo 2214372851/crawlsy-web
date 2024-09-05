@@ -114,7 +114,7 @@ export default {
 <script setup lang="ts">
 import type {PaginationProps, SelectOptionData} from "@arco-design/web-vue"
 import useLoading from '@/hooks/loading'
-import {reactive, type Ref, ref, withDefaults, useTemplateRef} from "vue"
+import {reactive, type Ref, ref, useTemplateRef} from "vue"
 
 interface SearchOption {
     label: string

@@ -1,6 +1,6 @@
 import {createRouter, createWebHistory, type RouteRecordRaw} from 'vue-router'
 import guard from "@/router/guard";
-import type {MetaType} from "@/types";
+import type {MetaType} from "@/types/global";
 
 
 const pages: Record<string, MetaType> = import.meta.glob('../views/**/page.ts', {
@@ -16,7 +16,8 @@ const routes: ReadonlyArray<RouteRecordRaw> = Object.entries(pages).map(([path, 
     if (meta.layout) {
         return {
             path,
-            component: () => import('../layout/index.vue'),
+            // @ts-ignore
+            component: () => import("@/layout/index.vue"),
             children: [
                 {
                     path: '',

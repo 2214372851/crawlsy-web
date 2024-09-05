@@ -21,4 +21,4 @@ interface MetaType extends RouteMeta{
 }
 
 
-export {MenuItem, BreadcrumbItem, MetaType}
+export type {MenuItem, BreadcrumbItem, MetaType}
