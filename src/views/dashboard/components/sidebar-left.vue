@@ -6,11 +6,14 @@
             </template>
             <a-list size="small" :bordered="false">
                 <a-list-item v-for="(item, index) in platformMsg" :key="index">
-                    <a-tag color="blue">消息</a-tag>
-                    {{ item }}
+                    <div style="display: flex; align-items: center;">
+                        <span style="height: 100%">
+                            <a-tag color="blue">消息</a-tag>
+                        </span>
+                        <span style="margin-left: 5px">{{ item }}</span>
+                    </div>
                     <template #actions>
-                        <icon-edit/>
-                        <icon-delete/>
+                        <icon-eye/>
                     </template>
                 </a-list-item>
             </a-list>
@@ -48,8 +51,7 @@ import {ref} from "vue";
 
 const appStore = useAppStore()
 const platformMsg = ref([
-    '长相思兮长相忆',
-    '断相思兮无穷极',
+    '长相思兮长相忆, 短相思兮无穷极',
     '为天地立心',
     '为生民立命',
     '为往圣继绝学',
