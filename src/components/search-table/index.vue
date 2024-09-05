@@ -112,9 +112,15 @@ export default {
 </script>
 
 <script setup lang="ts">
-import type {PaginationProps, SelectOptionData} from "@arco-design/web-vue"
+import type {PaginationProps, SelectOptionData, TableData, TableRowSelection} from "@arco-design/web-vue"
 import useLoading from '@/hooks/loading'
 import {reactive, type Ref, ref, useTemplateRef} from "vue"
+
+
+const formValue = ref<any>({
+    name: '',
+    dateRang: [],
+})
 
 interface SearchOption {
     label: string
@@ -131,7 +137,7 @@ withDefaults(defineProps<{
 })
 const {loading, setLoading, toggleLoading} = useLoading()
 const selectedKeys = ref([])
-const rowSelection = reactive({
+const rowSelection = reactive<TableRowSelection>({
     type: 'checkbox',
     showCheckedAll: true,
     onlyCurrent: true,
@@ -204,11 +210,7 @@ const searchOptions: Ref<SearchOption[]> = ref([
         field: 'dateRang',
     },
 ])
-const renderData = ref([]);
-const formValue = ref({
-    name: '',
-    dateRang: [],
-})
+const renderData = ref<TableData[]>([]);
 const fetchData = async (params: any = basePagination) => {
     setLoading(true);
     try {
@@ -222,7 +224,7 @@ const fetchData = async (params: any = basePagination) => {
                 email: `@ ${i} ${params.current}`,
             })
         }
-        renderData.value = data;
+        renderData.value = data as TableData[];
         pagination.value.current = params.current;
         pagination.value.total = 120;
     } catch (err) {
@@ -232,8 +234,8 @@ const fetchData = async (params: any = basePagination) => {
         setTimeout(() => setLoading(false), 2000)
     }
 }
-const handleSelectDensity = (val: 'mini' | 'small' | 'medium' | 'large') => {
-    tableSize.value = val
+const handleSelectDensity = (val: string | number | Record<string, any> | undefined) => {
+    tableSize.value = val as "small" | "mini" | "medium" | "large"
 };
 const handleChangePage = (current: number) => {
     pagination.value.current = current
