@@ -22,6 +22,7 @@ const useAppStore = defineStore('app', () => {
             document.body.removeAttribute('arco-theme');
         } else {
             darkThemeMq.addEventListener('change', followOs)
+            followOs()
         }
     };
     const addVisitedRoute = (route: { path: string; name: string }) => {

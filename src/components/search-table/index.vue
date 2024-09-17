@@ -1,47 +1,6 @@
 <template>
     <a-card title="节点管理" :header-style="{borderBottom: 'none'}">
-        <a-form size="medium" auto-label-width :model="formValue">
-            <a-grid :cols="3" :colGap="16" :rowGap="16" :collapsed="collapsed">
-                <a-grid-item v-for="(item, index) in searchOptions" :key="index">
-                    <a-form-item :field="item.field" :label="item.label">
-                        <a-input
-                            v-if="item.type === 'input'"
-                            v-model="formValue[item.field]"
-                            :placeholder="`请输入${item.label}`"/>
-                        <a-select
-                            v-else-if="item.type === 'select'"
-                            v-model="formValue[item.field]"
-                            :placeholder="`请选择${item.label}`"
-                            :options="item.options ?? []"
-                            :multiple="item.multiple ?? false"
-                            scrollbar/>
-                        <a-range-picker
-                            v-else-if="item.type === 'dateRang'"
-                            showTime
-                            :time-picker-props="{ defaultValue:['00:00:00','00:00:00'] }"
-                            v-model="formValue[item.field]"
-                        />
-                    </a-form-item>
-                </a-grid-item>
-            </a-grid>
-            <a-form-item>
-                <div style="margin-left: auto"/>
-                <a-space>
-                    <a-button type="primary">
-                        <template #icon>
-                            <icon-search/>
-                        </template>
-                        搜索
-                    </a-button>
-                    <a-button>
-                        <template #icon>
-                            <icon-refresh/>
-                        </template>
-                        重置
-                    </a-button>
-                </a-space>
-            </a-form-item>
-        </a-form>
+        <Search :collapsed="collapsed" :search-options="searchOptions" v-model="formValue" @reset="refreshData"/>
         <a-divider/>
         <div style="display: flex;justify-content: space-between;margin-bottom: 18px;">
             <a-space size="medium">
@@ -63,7 +22,8 @@
                     下载
                 </a-button>
                 <a-tooltip content="刷新">
-                    <icon-refresh class="cursor" @click="refreshData" size="18"/>
+                    <icon-refresh class="cursor" @click="refreshData" size="18" :disabled="loading"/>
+
                 </a-tooltip>
                 <a-dropdown @select="handleSelectDensity">
                     <a-tooltip content="密度">
@@ -71,71 +31,89 @@
                     </a-tooltip>
                     <template #content>
                         <a-doption
-                            v-for="item in densityOptions"
-                            :value="item.value"
-                            :key="item.value">
+                                v-for="item in densityOptions"
+                                :value="item.value"
+                                :key="item.value">
                             {{ item.label }}
                         </a-doption>
                     </template>
                 </a-dropdown>
-                <a-tooltip content="列设置">
-                    <icon-settings class="cursor" size="18"/>
+                <a-tooltip content="折叠搜索栏">
+                    <icon-to-bottom class="cursor" size="18" v-if="collapsed" @click="collapsed = !collapsed"/>
+                    <icon-to-top class="cursor" size="18" v-else @click="collapsed = !collapsed"/>
                 </a-tooltip>
             </a-space>
         </div>
         <a-table
-            ref="tableRef"
-            :row-key="rowKey"
-            :columns="columns"
-            :data="renderData"
-            :row-selection="rowSelection"
-            v-model:selectedKeys="selectedKeys"
-            @page-change="handleChangePage"
-            @page-size-change="handleChangePageSize"
-            :size="tableSize"
-            :loading="loading"
-            :pagination="pagination"
-            filterable>
+                ref="tableRef"
+                :row-key="rowKey"
+                :columns="columns"
+                :data="renderData"
+                :row-selection="rowSelection"
+                v-model:selectedKeys="selectedKeys"
+                @page-change="handleChangePage"
+                @page-size-change="handleChangePageSize"
+                :size="tableSize"
+                :loading="loading"
+                :pagination="pagination"
+                filterable>
             <template #optional="{ record }">
-                <a-button @click="$modal.info({ title:'Name', content:record.name })">
-                    view
+                <a-button>
+                    view {{record.name}}
                 </a-button>
             </template>
         </a-table>
     </a-card>
 </template>
 
-<script lang="ts">
-export default {
-    name: 'SearchTable',
-};
-</script>
 
 <script setup lang="ts">
-import type {PaginationProps, SelectOptionData, TableData, TableRowSelection} from "@arco-design/web-vue"
+import type {PaginationProps, TableData, TableRowSelection} from "@arco-design/web-vue"
 import useLoading from '@/hooks/loading'
-import {reactive, type Ref, ref, useTemplateRef} from "vue"
+import {onMounted, reactive, type Ref, ref, useTemplateRef} from "vue"
+import Search from "@/components/search/index.vue";
+import type {SearchOption} from "@/types/global";
 
 
 const formValue = ref<any>({
     name: '',
     dateRang: [],
 })
+const searchOptions: Ref<SearchOption[]> = ref([
+    {
+        label: '用户名',
+        type: 'input',
+        field: 'name',
+    },
+    {
+        label: '用户名',
+        type: 'input',
+        field: 'name',
+    },
+    {
+        label: '密码',
+        type: 'select',
+        multiple: true,
+        field: 'name',
+        options: [
+            {label: '选项1', value: '1'},
+            {label: '选项2', value: '2'},
+        ],
+    },
+    {
+        label: '日期范围',
+        type: 'dateRang',
+        field: 'dateRang',
+    },
+])
 
-interface SearchOption {
-    label: string
-    type: 'input' | 'select' | 'dateRang'
-    multiple?: boolean
-    field: string
-    options?: SelectOptionData[]
-}
 
 withDefaults(defineProps<{
     rowKey?: string
 }>(), {
     rowKey: 'key'
 })
-const {loading, setLoading, toggleLoading} = useLoading()
+const {loading, setLoading} = useLoading()
 const selectedKeys = ref([])
 const rowSelection = reactive<TableRowSelection>({
     type: 'checkbox',
@@ -183,34 +161,23 @@ const columns = [
         slotName: 'optional'
     }
 ]
-const searchOptions: Ref<SearchOption[]> = ref([
-    {
-        label: '用户名',
-        type: 'input',
-        field: 'name',
-    },
-    {
-        label: '用户名',
-        type: 'input',
-        field: 'name',
-    },
-    {
-        label: '密码',
-        type: 'select',
-        multiple: true,
-        field: 'name',
-        options: [
-            {label: '选项1', value: '1'},
-            {label: '选项2', value: '2'},
-        ],
-    },
-    {
-        label: '日期范围',
-        type: 'dateRang',
-        field: 'dateRang',
-    },
-])
+
 const renderData = ref<TableData[]>([]);
+
+const handleSelectDensity = (val: string | number | Record<string, any> | undefined) => {
+    tableSize.value = val as "small" | "mini" | "medium" | "large"
+};
+const handleChangePageSize = (pageSize: number) => {
+    const lastSize = pagination.value.pageSize as number
+    pagination.value.pageSize = pageSize
+    if (pagination.value.current === 1 && lastSize < pageSize) {
+        fetchData(pagination.value)
+    }
+}
+const handleChangePage = (current: number) => {
+    pagination.value.current = current
+    fetchData({...pagination.value, current})
+}
 const fetchData = async (params: any = basePagination) => {
     setLoading(true);
     try {
@@ -234,24 +201,18 @@ const fetchData = async (params: any = basePagination) => {
         setTimeout(() => setLoading(false), 2000)
     }
 }
-const handleSelectDensity = (val: string | number | Record<string, any> | undefined) => {
-    tableSize.value = val as "small" | "mini" | "medium" | "large"
-};
-const handleChangePage = (current: number) => {
-    pagination.value.current = current
-    fetchData({...pagination.value, current})
-
-}
-const handleChangePageSize = (pageSize: number) => {
-    pagination.value.pageSize = pageSize
-}
 const refreshData = async () => {
     setLoading(true)
     await fetchData({...pagination.value})
 }
-fetchData()
+onMounted(async () => await fetchData(pagination.value))
 </script>
 
+<script lang="ts">
+export default {
+    name: 'SearchTable',
+};
+</script>
 
 <style scoped lang="less">
 .cursor {
