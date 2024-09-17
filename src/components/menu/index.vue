@@ -59,13 +59,13 @@ const menus = [
         "path": "/node"
     },
     {
-        "id": 4,
+        "id": 5,
         "createTime": "2024-07-07 14:08:03",
         "updateTime": "2024-07-07 14:08:03",
         "parent": null,
-        "name": "Login",
-        "icon": "IconCode",
-        "path": "/login"
+        "name": "爬虫管理",
+        "icon": "IconBug",
+        "path": "/spider"
     },
 ]
 

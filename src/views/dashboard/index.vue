@@ -1,15 +1,15 @@
 <template>
-    <a-row :gutter="[16, 16]">
-        <a-col :span="18">
+    <a-grid :cols="{ xs: 1, sm: 1, md: 3, lg: 3, xl: 3, xxl: 3 }" :colGap="12" :rowGap="16">
+        <a-grid-item :span="2">
             <a-space direction="vertical" size="medium" :style="{ width: '100%' }">
                 <info/>
                 <record/>
             </a-space>
-        </a-col>
-        <a-col :span="6">
+        </a-grid-item>
+        <a-grid-item>
             <sidebar-left/>
-        </a-col>
-    </a-row>
+        </a-grid-item>
+    </a-grid>
 </template>
 
 <script setup lang="ts">

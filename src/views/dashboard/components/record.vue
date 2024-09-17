@@ -1,20 +1,16 @@
 <template>
-    <a-row :gutter="[16, 16]">
-        <a-col :span="12">
-            <a-card title="操作记录">
-                <a-list size="medium" style="height: 300px" :bordered="false">
-                    <a-list-item v-for="(item, index) in operationRecord" :key="index">
-                        {{ item }}
-                    </a-list-item>
-                </a-list>
-            </a-card>
-        </a-col>
-        <a-col :span="12">
-            <a-card title="流量占比">
-                <Chart :options="optionsPie" height="300px"/>
-            </a-card>
-        </a-col>
-    </a-row>
+    <a-grid :cols="{ xs: 1, sm: 1, md: 2, lg: 2, xl: 2, xxl: 2 }" :colGap="12" :rowGap="16">
+        <a-card title="操作记录">
+            <a-list size="medium" style="height: 300px" :bordered="false">
+                <a-list-item v-for="(item, index) in operationRecord" :key="index">
+                    {{ item }}
+                </a-list-item>
+            </a-list>
+        </a-card>
+        <a-card title="流量占比">
+            <Chart :options="optionsPie" height="300px"/>
+        </a-card>
+    </a-grid>
 </template>
 
 <script setup lang="ts">
@@ -60,7 +56,7 @@ const optionsPie = useChartOption((isDark) => {
             {
                 name: 'Access From',
                 type: 'pie',
-                radius: ['40%', '70%'],
+                radius: ['35%', '68%'],
                 avoidLabelOverlap: false,
                 itemStyle: {
                     borderRadius: 10,

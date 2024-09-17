@@ -1,78 +1,72 @@
 <template>
-    <a-card :style="{ width: '100%' }" title="欢迎回来！Admin">
-        <a-row :gutter="[16, 16]">
-            <a-col :span="12">
-                <a-space class="item-box">
-                    <a-avatar :size="64">
-                        <img
+    <a-card :style="{ width: '100%' }" :title="`欢迎回来！${userStore.username}`">
+        <a-grid :cols="{ xs: 1, sm: 1, md: 2, lg: 2, xl: 2, xxl: 2 }" :colGap="12" :rowGap="16">
+            <a-space class="item-box">
+                <a-avatar :size="64">
+                    <img
                             alt="avatar"
                             src="https://p1-arco.byteimg.com/tos-cn-i-uwbnlip3yd/3ee5f13fb09879ecb5185e440cef6eb9.png~tplv-uwbnlip3yd-webp.webp"
-                        />
-                    </a-avatar>
-                    <a-statistic title="数据" :value="125670" show-group-separator animation>
-                        <template #suffix>
-                            TB
-                        </template>
-                    </a-statistic>
-                </a-space>
-            </a-col>
-            <a-col :span="12">
-                <a-space class="item-box">
-                    <a-avatar :size="64">
-                        <img
+                    />
+                </a-avatar>
+                <a-statistic title="数据" :value="125670" show-group-separator animation>
+                    <template #suffix>
+                        TB
+                    </template>
+                </a-statistic>
+            </a-space>
+            <a-space class="item-box">
+                <a-avatar :size="64">
+                    <img
                             alt="avatar"
                             src="https://p1-arco.byteimg.com/tos-cn-i-uwbnlip3yd/3ee5f13fb09879ecb5185e440cef6eb9.png~tplv-uwbnlip3yd-webp.webp"
-                        />
-                    </a-avatar>
-                    <a-statistic title="日请求量" :value="189" show-group-separator animation>
-                        <template #suffix>
-                            W
-                        </template>
-                    </a-statistic>
-                </a-space>
-            </a-col>
-            <a-col :span="12">
-                <a-space class="item-box">
-                    <a-avatar :size="64">
-                        <img
+                    />
+                </a-avatar>
+                <a-statistic title="日请求量" :value="189" show-group-separator animation>
+                    <template #suffix>
+                        W
+                    </template>
+                </a-statistic>
+            </a-space>
+            <a-space class="item-box">
+                <a-avatar :size="64">
+                    <img
                             alt="avatar"
                             src="https://p1-arco.byteimg.com/tos-cn-i-uwbnlip3yd/3ee5f13fb09879ecb5185e440cef6eb9.png~tplv-uwbnlip3yd-webp.webp"
-                        />
-                    </a-avatar>
-                    <a-statistic title="运行中" :value="10" show-group-separator animation>
-                        <template #suffix>
-                            个
-                        </template>
-                    </a-statistic>
-                </a-space>
-            </a-col>
-            <a-col :span="12">
-                <a-space class="item-box">
-                    <a-avatar :size="64">
-                        <img
+                    />
+                </a-avatar>
+                <a-statistic title="运行中" :value="10" show-group-separator animation>
+                    <template #suffix>
+                        个
+                    </template>
+                </a-statistic>
+            </a-space>
+            <a-space class="item-box">
+                <a-avatar :size="64">
+                    <img
                             alt="avatar"
                             src="https://p1-arco.byteimg.com/tos-cn-i-uwbnlip3yd/3ee5f13fb09879ecb5185e440cef6eb9.png~tplv-uwbnlip3yd-webp.webp"
-                        />
-                    </a-avatar>
-                    <a-statistic title="完成" :value="12" show-group-separator animation>
-                        <template #suffix>
-                            个
-                        </template>
-                    </a-statistic>
-                </a-space>
-            </a-col>
-            <a-col :span="24">
+                    />
+                </a-avatar>
+                <a-statistic title="完成" :value="12" show-group-separator animation>
+                    <template #suffix>
+                        个
+                    </template>
+                </a-statistic>
+            </a-space>
+            <a-grid-item :span="2">
                 <a-card title="实时流量">
                     <Chart height="300px" :option="optionLine"/>
                 </a-card>
-            </a-col>
-        </a-row>
+            </a-grid-item>
+        </a-grid>
     </a-card>
 </template>
 
 <script setup lang="ts">
 import Chart from "@/components/chart/index.vue";
 import useChartOption from "@/hooks/chart-option";
+import useUserStore from "@/stores/modules/user";
+const userStore = useUserStore()
 const optionLine = useChartOption((isDark) => {
     return {
         backgroundColor: '',

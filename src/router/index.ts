@@ -7,7 +7,6 @@ const pages: Record<string, MetaType> = import.meta.glob('../views/**/page.ts', 
     eager: true,
     import: 'default'
 });
-console.log(pages)
 const comps = import.meta.glob('../views/**/index.vue');
 
 const routes: ReadonlyArray<RouteRecordRaw> = Object.entries(pages).map(([path, meta]) => {

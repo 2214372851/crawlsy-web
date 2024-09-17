@@ -12,7 +12,6 @@ module.exports = {
         ecmaVersion: 'latest'
     },
     rules: {
-        indent: ['error', 4],
         'vue/multi-word-component-names': 0
     }
 }
