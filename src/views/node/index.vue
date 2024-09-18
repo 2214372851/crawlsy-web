@@ -87,6 +87,7 @@
       </a-list>
       <div style="display:flex;justify-content: end;">
         <a-pagination
+            simple
             v-model:current="paginationVal.current"
             v-model:pageSize="paginationVal.pageSize"
             v-model:total="paginationVal.total"

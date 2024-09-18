@@ -41,6 +41,11 @@ type ApiResponse<T> = {
     msg: string
 }
 
+type ApiListResponse<T> = {
+    total: number,
+    list: T[]
+}
+
 export type {
     MenuItem,
     BreadcrumbItem,
@@ -48,4 +53,5 @@ export type {
     SearchOption,
     IdeTabItem,
     ApiResponse,
+    ApiListResponse,
 }

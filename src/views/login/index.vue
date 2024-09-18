@@ -1,6 +1,6 @@
 <template>
   <a-layout>
-    <a-layout-sider style="height: 100vh; max-width: 400px; width: 30%">
+    <a-layout-sider style="height: 100vh; max-width: 400px; width: 30%" class="media-hide">
       <div class="banner">
         <div class="banner-title">
           Spider Manage
@@ -13,7 +13,7 @@
         <img src="../../assets/svg/login.svg" alt="banner-image" class="banner-image">
       </div>
     </a-layout-sider>
-    <a-layout>
+    <a-layout style="height: 100vh">
       <a-layout-content>
         <div class="content">
           <div class="login-from-box">
@@ -75,6 +75,7 @@ import type {LoginResponse} from "@/api/modules/login";
 import {loginApi} from "@/api/modules/login";
 import useUserStore from "@/stores/modules/user";
 import router from "@/router";
+import {Message} from "@arco-design/web-vue";
 
 const form = reactive({
   email: '',
@@ -113,8 +114,11 @@ const handleSubmit = async () => {
   }
   const {code, data} = await loginApi(form)
   if (code !== 0) return
-  console.log(userStore.username)
   userStore.setUserInfo(data as LoginResponse)
+  Message.success({
+    content: '登录成功',
+    duration: 5000
+  })
   router.push('/dashboard')
 }
 </script>
@@ -199,5 +203,10 @@ const handleSubmit = async () => {
 
 :deep(.arco-layout-sider) {
   background: linear-gradient(163.85deg, #1d2129, #00308f);
+}
+@media screen and (max-width: 630px) {
+  .media-hide {
+    display: none;
+  }
 }
 </style>
