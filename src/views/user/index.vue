@@ -1,45 +1,90 @@
 <template>
   <SearchTable
       name="用户"
+      row-key="uid"
       :search-options="searchOptions"
       :columns="columns"
+      :addFormRef="addFormRef"
+      :editFormRef="editFormRef"
       :info-api="userInfoApi"
+      :add-api="userAddApi"
       :edit-api="userUpdateApi"
-      :data-api="userListApi">
+      :data-api="userListApi"
+      :del-api="userDelApi">
     <template #edit-content="formValue">
-      <a-form :model="formValue">
-            <a-form-item field="username" label="用户名">
-              <a-input v-model="formValue.data.username" placeholder="please enter..." />
-            </a-form-item>
-            <a-form-item field="email" label="邮箱">
-              <a-input v-model="formValue.data.email" placeholder="please enter..." />
-            </a-form-item>
-            <a-form-item field="password" label="密码">
-              <a-input v-model="formValue.data.password" placeholder="please enter..." />
-            </a-form-item>
-            <a-form-item field="status" label="状态">
-              <a-select v-model="formValue.data.status" :options="statusOptions" placeholder="please enter..." />
-            </a-form-item>
-            <a-form-item field="role" label="角色">
-              <a-select
-                  v-model="formValue.data.role"
-                  :options="options"
-                  :field-names="{label: 'name', value: 'id'}"
-                  value-key="name"
-                  multiple
-                  placeholder="please enter..." />
-            </a-form-item>
+      <a-form ref="editFormRef" :model="formValue">
+        <a-form-item field="username" label="用户名">
+          <a-input
+              v-model="formValue.data.username"
+              placeholder="请输入用户名..."/>
+        </a-form-item>
+        <a-form-item field="email" label="邮箱">
+          <a-input
+              v-model="formValue.data.email"
+              placeholder="请输入邮箱..."/>
+        </a-form-item>
+        <a-form-item field="password" label="密码">
+          <a-input-password
+              v-model="formValue.data.password"
+              placeholder="请输入密码..."/>
+        </a-form-item>
+        <a-form-item field="status" label="状态">
+          <a-select
+              v-model="formValue.data.status"
+              :options="statusOptions"
+              placeholder="请选择状态..."/>
+        </a-form-item>
+        <a-form-item field="role" label="角色">
+          <a-select
+              v-model="formValue.data.role"
+              :options="options"
+              :field-names="{label: 'name', value: 'id'}"
+              value-key="name"
+              multiple
+              placeholder="请选择角色..."/>
+        </a-form-item>
       </a-form>
-      {{formValue.data}}
+    </template>
+    <template #add-content="formValue">
+      <a-form ref="addFormRef" :model="formValue">
+        <a-form-item field="username" label="用户名">
+          <a-input
+              v-model="formValue.data.username"
+              placeholder="请输入用户名..."/>
+        </a-form-item>
+        <a-form-item field="email" label="邮箱">
+          <a-input
+              v-model="formValue.data.email"
+              placeholder="请输入邮箱..."/>
+        </a-form-item>
+        <a-form-item field="password" label="密码">
+          <a-input-password
+              v-model="formValue.data.password"
+              placeholder="请输入密码..."/>
+        </a-form-item>
+        <a-form-item field="role" label="角色">
+          <a-select
+              v-model="formValue.data.role"
+              :options="options"
+              :field-names="{label: 'name', value: 'id'}"
+              value-key="name"
+              multiple
+              placeholder="请选择角色..."/>
+        </a-form-item>
+      </a-form>
     </template>
   </SearchTable>
 </template>
 
 <script setup lang="ts">
 import SearchTable from "@/components/search-table/index.vue";
-import {userListApi, userUpdateApi, userInfoApi} from "@/api/modules/user";
-import {ref, type Ref} from "vue";
+import {userAddApi, userDelApi, userInfoApi, userListApi, userUpdateApi} from "@/api/modules/user";
+import {ref, type Ref, type ShallowRef, useTemplateRef} from "vue";
 import type {SearchOption} from "@/types/global";
+
+const editFormRef: Readonly<ShallowRef<unknown | null>> = useTemplateRef('editFormRef')
+const addFormRef = useTemplateRef('addFormRef')
+// TODO 从数据库获取
 const options = [
   {
     name: '管理员',
@@ -102,7 +147,9 @@ const columns = [
   },
   {
     title: '操作',
-    slotName: 'optional'
+    slotName: 'optional',
+    fixed: 'right',
+    width: 160
   }
 ]
 </script>

@@ -1,4 +1,4 @@
 export default {
-    title: '节点管理',
+    title: 'Spider Manage | 节点管理',
     layout: true
 }

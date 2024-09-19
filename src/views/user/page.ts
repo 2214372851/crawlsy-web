@@ -1,4 +1,4 @@
 export default {
-    title: '爬虫管理',
+    title: 'Spider Manage | 用户管理',
     layout: true
 }

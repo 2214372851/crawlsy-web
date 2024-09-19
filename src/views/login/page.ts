@@ -1,4 +1,4 @@
 export default {
-    title: '登录',
+    title: 'Spider Manage | 登录',
     layout: false
 }

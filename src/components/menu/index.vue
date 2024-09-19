@@ -72,9 +72,18 @@ const menus = [
     "createTime": "2024-07-07 14:08:03",
     "updateTime": "2024-07-07 14:08:03",
     "parent": null,
-    "name": "用户",
-    "icon": "IconBug",
+    "name": "用户管理",
+    "icon": "IconUser",
     "path": "/user"
+  },
+  {
+    "id": 6,
+    "createTime": "2024-07-07 14:08:03",
+    "updateTime": "2024-07-07 14:08:03",
+    "parent": null,
+    "name": "权限管理",
+    "icon": "iconLock",
+    "path": "/permission"
   },
 ]
 

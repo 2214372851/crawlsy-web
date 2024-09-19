@@ -6,14 +6,11 @@
     <a-grid :cols="{ xs: 1, sm: 2, md: 2, lg: 2, xl: 2, xxl: 2 }" :colGap="12" :rowGap="16" class="table-toolbar">
       <a-grid-item :span="1">
         <a-space size="medium">
-          <a-button type="primary">
+          <a-button type="primary" @click="addStartHandle">
             <template #icon>
               <icon-plus/>
             </template>
             新建
-          </a-button>
-          <a-button>
-            批量导入
           </a-button>
         </a-space>
       </a-grid-item>
@@ -80,9 +77,11 @@
           <a-button status="normal" @click="editStartHandle(record.uid ?? record.id)">
             修改
           </a-button>
-          <a-button status="danger">
-            删除
-          </a-button>
+          <a-popconfirm content="确认删除吗?" type="warning" @ok="deleteHandle(record.uid ?? record.id)">
+            <a-button status="danger">
+              删除
+            </a-button>
+          </a-popconfirm>
         </a-space>
       </template>
     </a-table>
@@ -92,7 +91,15 @@
         v-model:visible="editVisible"
         @cancel="editHandleCancel"
         :on-before-ok="editHandleBeforeOk" unmountOnClose>
-      <slot name="edit-content" :data="editFormValue" @update-data="updateData"/>
+      <slot name="edit-content" :data="editFormValue" @update-data="editUpdateData"/>
+    </a-modal>
+    <a-modal
+        :title="`${name}新建`"
+        width="600px"
+        v-model:visible="addVisible"
+        @cancel="addHandleCancel"
+        :on-before-ok="addHandleBeforeOk" unmountOnClose>
+      <slot name="add-content" :data="addFormValue" @update-data="addUpdateData"/>
     </a-modal>
   </a-card>
 </template>
@@ -100,26 +107,31 @@
 
 <script setup lang="ts">
 import type {PaginationProps, TableData, TableRowSelection} from "@arco-design/web-vue"
+import {Message} from "@arco-design/web-vue";
 import useLoading from '@/hooks/loading'
 import {onMounted, reactive, type Ref, ref, useTemplateRef} from "vue"
 import Search from "@/components/search/index.vue";
-import type {ApiListResponse, SearchOption} from "@/types/global";
-import {Message} from "@arco-design/web-vue";
-import type {ApiResponse} from "@/types/global";
+import type {AnyObject, ApiListResponse, ApiResponse, SearchOption} from "@/types/global";
 
 
 const formValue = ref<Record<string, any>>({})
 const editFormValue = ref<Record<string, any>>({})
+const addFormValue = ref<Record<string, any>>({})
 const editItemKey = ref('')
 const editVisible = ref(false)
-const {rowKey = 'key', dataApi, editApi, infoApi} = defineProps<{
+const addVisible = ref(false)
+const {rowKey = 'id', dataApi, editApi, infoApi, addApi, delApi, editFormRef, addFormRef} = defineProps<{
   name: string,
   rowKey?: string,
   searchOptions: SearchOption[],
   columns: { title: string, dataIndex?: string, slotName?: string }[],
   dataApi: (params: Record<string, any>) => Promise<ApiResponse<ApiListResponse<any>>>
-  editApi: (id: string, data: Record<string, any>) => Promise<ApiResponse<any>>
+  editApi: (id: string, data: any) => Promise<ApiResponse<any>>
   infoApi: (id: string) => Promise<ApiResponse<any>>
+  addApi: (data: any) => Promise<ApiResponse<any>>
+  delApi: (id: string) => Promise<ApiResponse<any>>
+  editFormRef: any
+  addFormRef: any
 }>()
 const {loading, setLoading} = useLoading()
 const selectedKeys = ref([])
@@ -179,7 +191,8 @@ const fetchData = async (params: any = basePagination) => {
 }
 const refreshData = async () => {
   setLoading(true)
-  await fetchData({...pagination.value})
+  formValue.value = {}
+  await fetchData(pagination.value)
 }
 const editStartHandle = async (id: string) => {
   const {code, data} = await infoApi(id)
@@ -188,24 +201,77 @@ const editStartHandle = async (id: string) => {
   editItemKey.value = id;
   editFormValue.value = data;
 }
+const deleteHandle = async (id: string) => {
+  const {code, data} = await delApi(id)
+  if (code !== 0) return
+  await fetchData(pagination.value)
+}
 const editHandleCancel = () => {
   editVisible.value = false;
+  editFormValue.value = {}
 }
 const editHandleBeforeOk = async () => {
   try {
-    const {code} = await editApi(editItemKey.value, editFormValue.value)
+    const {code, data} = await editApi(editItemKey.value, editFormValue.value)
+    if (code === 3) {
+      const fieldsValid: AnyObject = {}
+      for (const key in data) {
+        fieldsValid[key] = {
+          status: 'error',
+          message: data[key][0]
+        }
+      }
+      editFormRef.setFields(fieldsValid)
+    }
+    if (code !== 0) return false
     await fetchData(pagination.value)
+    editFormValue.value = {}
     Message.success({
       content: "修改成功",
       duration: 5000
     })
-    return code === 0;
+    return true;
   } catch (e) {
     return false;
   }
 }
-const updateData = (newValue: Record<string, any>) => {
+const editUpdateData = (newValue: Record<string, any>) => {
   editFormValue.value = newValue;
+};
+const addStartHandle = async () => {
+  addVisible.value = true;
+}
+const addHandleCancel = () => {
+  addVisible.value = false;
+  addFormValue.value = {}
+}
+const addHandleBeforeOk = async () => {
+  try {
+    const {code, data} = await addApi(addFormValue.value)
+    if (code === 3) {
+      const fieldsValid: AnyObject = {}
+      for (const key in data) {
+        fieldsValid[key] = {
+          status: 'error',
+          message: data[key][0]
+        }
+      }
+      addFormRef.setFields(fieldsValid)
+    }
+    if (code !== 0) return false
+    await fetchData(pagination.value)
+    addFormValue.value = {}
+    Message.success({
+      content: "添加成功",
+      duration: 5000
+    })
+    return true;
+  } catch (e) {
+    return false;
+  }
+}
+const addUpdateData = (newValue: Record<string, any>) => {
+  addFormValue.value = newValue;
 };
 onMounted(async () => await fetchData(pagination.value))
 </script>
@@ -220,6 +286,7 @@ export default {
 .cursor {
   cursor: pointer;
 }
+
 .table-toolbar {
   margin-bottom: 12px;
 }

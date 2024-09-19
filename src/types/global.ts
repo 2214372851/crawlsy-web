@@ -46,6 +46,10 @@ type ApiListResponse<T> = {
     list: T[]
 }
 
+interface AnyObject {
+    [key: string]: any;
+}
+
 export type {
     MenuItem,
     BreadcrumbItem,
@@ -54,4 +58,5 @@ export type {
     IdeTabItem,
     ApiResponse,
     ApiListResponse,
+    AnyObject,
 }
