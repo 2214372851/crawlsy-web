@@ -1,13 +1,13 @@
 <template>
   <SearchTable
-      name="爬虫"
+      name="任务"
       :search-options="searchOptions"
       :columns="columns"
-      :data-api="spiderListApi"
-      :edit-api="spiderUpdateApi"
-      :info-api="spiderInfoApi"
-      :add-api="spiderAddApi"
-      :del-api="spiderDelApi"
+      :data-api="taskListApi"
+      :edit-api="taskUpdateApi"
+      :info-api="taskInfoApi"
+      :add-api="taskAddApi"
+      :del-api="taskDelApi"
       :edit-form-ref="editFormRef"
       :add-form-ref="addFormRef">
     <template #edit-content="formValue">
@@ -17,11 +17,34 @@
               v-model="formValue.data.name"
               placeholder="请输入名称..."/>
         </a-form-item>
+        <a-form-item field="cronExpression" label="cron表达式">
+          <a-input
+              v-model="formValue.data.cronExpression"
+              placeholder="请输入表达式..."/>
+        </a-form-item>
+        <a-form-item field="taskSpider" label="爬虫">
+          <a-select
+              v-model="formValue.data.taskSpider"
+              :options="spiderOptions"
+              placeholder="请选择爬虫..."/>
+        </a-form-item>
+        <a-form-item field="isTiming" label="定时">
+          <a-select
+              v-model="formValue.data.isTiming"
+              :options="timingOptions"
+              placeholder="请选择定时..."/>
+        </a-form-item>
         <a-form-item field="status" label="状态">
           <a-select
               v-model="formValue.data.status"
               :options="statusOptions"
               placeholder="请选择状态..."/>
+        </a-form-item>
+        <a-form-item field="taskNodes" label="任务节点">
+          <a-select
+              v-model="formValue.data.taskNodes"
+              :options="nodeOptions"
+              placeholder="请选择节点..."/>
         </a-form-item>
       </a-form>
     </template>
@@ -35,18 +58,20 @@
       </a-form>
     </template>
   </SearchTable>
-
 </template>
 
 <script setup lang="ts">
+import {taskListApi, taskAddApi, taskDelApi, taskInfoApi, taskUpdateApi} from "@/api/modules/task";
 import SearchTable from "@/components/search-table/index.vue";
-import {spiderAddApi, spiderDelApi, spiderInfoApi, spiderUpdateApi, spiderListApi} from "@/api/modules/spider";
 import {ref, type Ref, useTemplateRef} from "vue";
 import type {SearchOption} from "@/types/global";
 
-
 const editFormRef = useTemplateRef('editFormRef')
 const addFormRef = useTemplateRef('addFormRef')
+// TODO: 获取爬虫列表
+const spiderOptions = []
+// TODO: 获取节点列表
+const nodeOptions = []
 const statusOptions = [
   {
     label: "可用",
@@ -54,6 +79,16 @@ const statusOptions = [
   },
   {
     label: "不可用",
+    value: false
+  }
+]
+const timingOptions = [
+  {
+    label: "是",
+    value: true
+  },
+  {
+    label: "否",
     value: false
   }
 ]
@@ -75,9 +110,10 @@ const searchOptions: Ref<SearchOption[]> = ref([
     options: statusOptions
   },
   {
-    label: '爬虫任务ID',
-    type: 'input',
-    field: 'spiderUid',
+    label: '定时',
+    type: 'select',
+    field: 'isTiming',
+    options: timingOptions
   },
 ])
 
@@ -91,12 +127,20 @@ const columns = [
     slotName: 'user',
   },
   {
-    title: '爬虫标识',
-    dataIndex: 'spiderUid',
+    title: '爬虫',
+    dataIndex: 'spider.name',
+  },
+  {
+    title: '定时任务',
+    slotName: 'isTiming',
   },
   {
     title: '状态',
     slotName: 'status',
+  },
+  {
+    title: 'cron 表达式',
+    dataIndex: 'cronExpression',
   },
   {
     title: '创建时间',

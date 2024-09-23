@@ -53,7 +53,9 @@
             </a-dropdown>
 
             <a-dropdown @select="handleSelectProfile" trigger="hover">
-              <a-avatar :style="{ backgroundColor: '#ff2121' }">{{ userStore.username }}</a-avatar>
+              <a-avatar image-url="https://t.tutu.to/img/qkDfk">
+<!--                {{ userStore.username[0] }}-->
+              </a-avatar>
               <template #content>
                 <a-doption value="profile">
                   <template #icon>

@@ -62,9 +62,16 @@
         column-resizable
         stripe
         filterable>
+      <template #user="{ record }">
+        <a-tag>{{record.founderUser.username}}</a-tag>
+      </template>
+      <template #isTiming="{ record }">
+        <a-tag color="green" v-if="record.isTiming">是</a-tag>
+        <a-tag color="red" v-else>否</a-tag>
+      </template>
       <template #status="{ record }">
-        <a-tag color="green" v-if="record.status">正常</a-tag>
-        <a-tag color="red" v-else>禁用</a-tag>
+        <a-tag color="green" v-if="record.status">可用</a-tag>
+        <a-tag color="red" v-else>不可用</a-tag>
       </template>
       <template #createTime="{ record }">
         <a-tag color="arcoblue">{{ record.createTime }}</a-tag>
@@ -177,7 +184,8 @@ const handleChangePage = (current: number) => {
 const fetchData = async (params: any = basePagination) => {
   setLoading(true);
   try {
-    const res = await dataApi({...formValue.value, ...params})
+    const {current, pageSize} = params
+    const res = await dataApi({...formValue.value, page: current, pageSize})
     if (!res.data) return
     renderData.value = res.data.list;
     pagination.value.current = params.current;

@@ -85,6 +85,15 @@ const menus = [
     "icon": "iconLock",
     "path": "/permission"
   },
+  {
+    "id": 6,
+    "createTime": "2024-07-07 14:08:03",
+    "updateTime": "2024-07-07 14:08:03",
+    "parent": null,
+    "name": "任务管理",
+    "icon": "iconSelectAll",
+    "path": "/task"
+  },
 ]
 
 

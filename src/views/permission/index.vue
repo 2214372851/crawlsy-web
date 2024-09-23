@@ -82,10 +82,10 @@ import {
   permissionListApi,
   permissionUpdateApi
 } from "@/api/modules/permission";
-import {ref, type Ref, type ShallowRef, useTemplateRef} from "vue";
+import {ref, type Ref, useTemplateRef} from "vue";
 import type {SearchOption} from "@/types/global";
 
-const editFormRef: Readonly<ShallowRef<unknown | null>> = useTemplateRef('editFormRef')
+const editFormRef = useTemplateRef('editFormRef')
 const addFormRef = useTemplateRef('addFormRef')
 const options = [
   {
@@ -112,12 +112,37 @@ const menuOptions = [
     id: 2
   }
 ]
+const statusOptions = [
+  {
+    label: 'GET',
+    value: 'GET'
+  },
+  {
+    label: 'POST',
+    value: 'POST'
+  },
+  {
+    label: 'PUT',
+    value: 'PUT'
+  },
+  {
+    label: 'DELETE',
+    value: 'DELETE'
+  }
+]
 const searchOptions: Ref<SearchOption[]> = ref([
   {
     label: '名称',
     type: 'input',
     field: 'name',
   },
+  {
+    label: '方法',
+    type: 'select',
+    // multiple: true,
+    field: 'method',
+    options: statusOptions,
+  }
 ])
 const columns = [
   {
