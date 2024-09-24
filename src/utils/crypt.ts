@@ -9,3 +9,7 @@ export const decrypt = (data: string): string => {
 export const encrypt = (data: string): string => {
     return CryptoJs.AES.encrypt(data, KEY).toString()
 }
+
+export const md5 = (data: string): string => {
+    return CryptoJs.MD5(data).toString()
+}

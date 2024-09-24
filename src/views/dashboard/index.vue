@@ -7,7 +7,7 @@
             </a-space>
         </a-grid-item>
         <a-grid-item>
-            <sidebar-left/>
+            <sidebar-info/>
         </a-grid-item>
     </a-grid>
 </template>
@@ -25,7 +25,7 @@ import {
 import {CanvasRenderer} from "echarts/renderers"
 import Info from "@/views/dashboard/components/info.vue";
 import Record from "@/views/dashboard/components/record.vue";
-import SidebarLeft from "@/views/dashboard/components/sidebar-left.vue";
+import SidebarInfo from "@/views/dashboard/components/sidebar-info.vue";
 
 
 use([

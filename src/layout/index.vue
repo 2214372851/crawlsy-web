@@ -53,10 +53,16 @@
             </a-dropdown>
 
             <a-dropdown @select="handleSelectProfile" trigger="hover">
-              <a-avatar image-url="https://t.tutu.to/img/qkDfk">
-<!--                {{ userStore.username[0] }}-->
+              <a-avatar :image-url="getUserAvatar()">
+                <!--                {{ userStore.username[0] }}-->
               </a-avatar>
               <template #content>
+                <a-doption value="avatar">
+                  <template #icon>
+                    <icon-image />
+                  </template>
+                  修改头像
+                </a-doption>
                 <a-doption value="profile">
                   <template #icon>
                     <icon-idcard/>
@@ -119,6 +125,7 @@ import type {BreadcrumbItem} from "@/types/global";
 import useAppStore from "@/stores/modules/app";
 import useUserStore from "@/stores/modules/user";
 import PageLayout from "@/layout/page-layout.vue";
+import {md5} from "@/utils/crypt";
 
 const route = useRoute()
 const appStore = useAppStore()
@@ -153,6 +160,10 @@ const breadcrumbs = computed(() => {
 const onCollapse = (value: boolean) => {
   collapsed.value = value
 }
+const getUserAvatar = () => {
+  const avatar: string = userStore.email
+  return `https://cravatar.cn/avatar/${md5(avatar.toLowerCase().trim())}?`
+}
 const handleFullScreen = () => {
   let element = document.documentElement
   if (fullscreen.value) {
@@ -185,6 +196,9 @@ const switchTheme = () => {
 }
 const handleSelectProfile = (val: string | number | Record<string, any> | undefined) => {
   switch (val) {
+    case 'avatar':
+        window.open('https://cravatar.cn/avatars')
+      break
     case 'logout':
       userStore.logout()
       break

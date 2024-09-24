@@ -50,6 +50,7 @@ interface AnyObject {
     [key: string]: any;
 }
 
+type Method = 'GET' | 'POST' | 'PUT' | 'DELETE'
 export type {
     MenuItem,
     BreadcrumbItem,
@@ -59,4 +60,5 @@ export type {
     ApiResponse,
     ApiListResponse,
     AnyObject,
+    Method,
 }

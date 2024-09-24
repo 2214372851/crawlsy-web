@@ -15,7 +15,9 @@ http.interceptors.request.use(
     (config) => {
         const userStore = useUserStore()
         config.headers.token = userStore.accessToken || null
-        config.headers["refresh-token"] = userStore.refreshToken || null
+        if (config.url?.includes("refresh")) {
+            config.headers.refreshToken = userStore.refreshToken || null
+        }
         return config
     },
     (error) => {
@@ -37,6 +39,7 @@ http.interceptors.response.use(
                     return
                 }
                 try {
+                    userStore.accessToken = ''
                     await userStore.refresh()
                     return await http(response.config)
                 } catch (e) {

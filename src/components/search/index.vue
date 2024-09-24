@@ -26,13 +26,13 @@
     <a-form-item>
       <div style="margin-left: auto"/>
       <a-space>
-        <a-button type="primary" @click="submit">
+        <a-button type="primary" @click="submit" :loading="loading">
           <template #icon>
             <icon-search/>
           </template>
           搜索
         </a-button>
-        <a-button @click="reset">
+        <a-button @click="reset" :loading="loading">
           <template #icon>
             <icon-refresh/>
           </template>
@@ -47,7 +47,7 @@
 import type {SearchOption} from "@/types/global";
 
 const emit = defineEmits(['submit', 'reset'])
-const {collapsed = false, searchOptions} = defineProps<{ collapsed: boolean, searchOptions: SearchOption[] }>()
+const {collapsed = false, searchOptions} = defineProps<{ collapsed: boolean,loading: boolean, searchOptions: SearchOption[] }>()
 type ExtractFields<T extends SearchOption[]> = T[number]['field'];
 type FieldValues = ExtractFields<typeof searchOptions>;
 type SearchFormData = {

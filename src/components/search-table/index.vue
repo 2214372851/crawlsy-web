@@ -1,6 +1,6 @@
 <template>
   <a-card :title="`${name}管理`" :header-style="{borderBottom: 'none'}">
-    <Search :collapsed="collapsed" :search-options="searchOptions" v-model="formValue" @reset="refreshData"
+    <Search :loading="loading" :collapsed="collapsed" :search-options="searchOptions" v-model="formValue" @reset="refreshData"
             @submit="fetchData"/>
     <a-divider/>
     <a-grid :cols="{ xs: 1, sm: 2, md: 2, lg: 2, xl: 2, xxl: 2 }" :colGap="12" :rowGap="16" class="table-toolbar">

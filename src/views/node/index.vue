@@ -23,74 +23,107 @@
           </a-space>
 
         </a-grid-item>
-
       </a-grid>
-      <a-grid v-if="!isList" :cols="{ xs: 1, sm: 2, md: 3, lg: 4, xl: 5, xxl: 6 }" :colGap="16" :rowGap="16">
-        <a-grid-item v-for="index in count" :key="index">
-          <a-card>
-            <a-space direction="vertical" fill>
-              <a-card-meta>
+
+      <a-spin style="width: 100%" :loading="loading">
+        <a-empty v-if="renderData.length == 0"/>
+        <div v-else>
+          <a-grid v-if="!isList" :cols="{ xs: 1, sm: 2, md: 3, lg: 3, xl: 3, xxl: 3 }" :colGap="16" :rowGap="16">
+            <a-grid-item v-for="item in renderData" :key="item.id">
+              <a-card>
+                <a-space direction="vertical" fill>
+                  <a-card-meta>
+                    <template #title>
+                      <div style="display: flex;justify-content: space-between">
+                        <span>{{ item.name }}</span>
+                        <a-tag color="green" v-if="item.status">
+                          <template #icon>
+                            <icon-check-circle-fill/>
+                          </template>
+                          运行中
+                        </a-tag>
+                        <a-tag color="red" v-else>
+                          <template #icon>
+                            <icon-close-circle-fill/>
+                          </template>
+                          异常
+                        </a-tag>
+                      </div>
+                    </template>
+                    <template #description>
+                      <a-space direction="vertical">
+                        <div>
+                          <a-tag color="arcoblue">{{ item.nodeUid }}</a-tag>
+                        </div>
+                        <div>
+                          创建时间：
+                          <a-tag>{{ item.createTime }}</a-tag>
+                        </div>
+                        <div>
+                          更新时间：
+                          <a-tag>{{ item.updateTime }}</a-tag>
+                        </div>
+                      </a-space>
+                    </template>
+                  </a-card-meta>
+
+                  <a-progress size="large" type="circle" :percent="0.4" show-text/>
+                  <a-space style="">
+                    <a-button type="primary">查看</a-button>
+                    <a-button type="primary">编辑</a-button>
+                  </a-space>
+                </a-space>
+
+              </a-card>
+            </a-grid-item>
+          </a-grid>
+          <a-list :loading="loading" v-else>
+            <a-list-item v-for="item in renderData" :key="item.id" action-layout="vertical">
+              <a-list-item-meta>
                 <template #title>
-                  <div style="display: flex;justify-content: space-between">
-                    <span>{{ `node ${index}` }}</span>
-                    <a-tag color="green">
+                  <a-space>
+                    <span>{{ item.name }}</span>
+                    <a-tag color="green" v-if="item.status">
                       <template #icon>
                         <icon-check-circle-fill/>
                       </template>
                       运行中
                     </a-tag>
-                  </div>
+                    <a-tag color="red" v-else>
+                      <template #icon>
+                        <icon-close-circle-fill/>
+                      </template>
+                      异常
+                    </a-tag>
+                  </a-space>
                 </template>
                 <template #description>
-                  2021-10-12 00:00:00
-                </template>
-              </a-card-meta>
+                  更新时间：{{ item.updateTime }}
+                  <br>
+                  创建时间：{{ item.createTime }}
+                  <br>
+                  节点标识：
+                  <a-tag>{{ item.nodeUid }}</a-tag>
 
-              <a-typography-paragraph type="secondary">
-                快速诊断用户人群，地域细分情况，了解数据分布的集中度，以及主要的数据分布的区间段是什么。
-              </a-typography-paragraph>
-              <a-space style="">
-                <a-button type="primary">查看</a-button>
-                <a-button type="primary">编辑</a-button>
-              </a-space>
-            </a-space>
-
-          </a-card>
-        </a-grid-item>
-      </a-grid>
-      <a-list v-else>
-        <a-list-item v-for="idx in count" :key="idx" action-layout="vertical">
-          <a-list-item-meta
-              :title="`Node ${idx}`"
-              description="2021-10-12 00:00:00"
-          >
-            <template #avatar>
-              <a-tag color="green">
-                <template #icon>
-                  <icon-check-circle-fill/>
                 </template>
-                运行中
-              </a-tag>
-            </template>
-          </a-list-item-meta>
-          <template #extra>
-            <div>
-              <img style="height: 80px" alt="arco-design"
-                   src="//p1-arco.byteimg.com/tos-cn-i-uwbnlip3yd/a8c8cdb109cb051163646151a4a5083b.png~tplv-uwbnlip3yd-webp.webp"/>
-            </div>
-          </template>
-          <template #actions>
-            <icon-edit/>
-            <icon-delete/>
-          </template>
-        </a-list-item>
-      </a-list>
+              </a-list-item-meta>
+              <template #extra>
+                <a-progress size="large" type="circle" :percent="0.4" show-text/>
+              </template>
+              <template #actions>
+                <icon-edit/>
+                <icon-delete/>
+              </template>
+            </a-list-item>
+          </a-list>
+        </div>
+      </a-spin>
       <div style="display:flex;justify-content: end;">
         <a-pagination
             simple
-            v-model:current="paginationVal.current"
-            v-model:pageSize="paginationVal.pageSize"
-            v-model:total="paginationVal.total"
+            v-model:current="pagination.current"
+            v-model:pageSize="pagination.pageSize"
+            v-model:total="pagination.total as number"
             show-page-size/>
       </div>
     </a-space>
@@ -99,19 +132,58 @@
 
 <script setup lang="ts">
 
-import {reactive, ref} from "vue";
+import {onMounted, type Ref, ref} from "vue";
+import useLoading from "@/hooks/loading";
+import {type NodeItem, nodeListApi} from "@/api/modules/node";
+import type {PaginationProps} from "@arco-design/web-vue";
 
-const paginationVal = reactive({
+const basePagination = {
   current: 1,
-  pageSize: 10,
-  total: 100
-});
+  pageSize: 5
+}
+const pagination: Ref<PaginationProps> = ref({
+  showPageSize: true,
+  pageSizeOptions: [5, 10, 15],
+  size: 'mini',
+  total: 0,
+  ...basePagination
+})
+const formValue = ref({})
+const renderData = ref<NodeItem[]>([])
 const isList = ref(true);
 const count = ref(10);
 
-const handleTabChange = (key: string | number) => {
-  console.log(key);
+const {loading, setLoading} = useLoading();
+const handleTabChange = async (key: string | number) => {
+  switch (key) {
+    case 'all':
+      delete formValue.value.status
+      break
+    case 'run':
+      formValue.value.status = true
+      break
+    case 'stop':
+      formValue.value.status = false
+      break
+  }
+  await fetchData(pagination.value)
 };
+const fetchData = async (params: any = basePagination) => {
+  setLoading(true);
+  try {
+    const {current, pageSize} = params
+    const res = await nodeListApi({...formValue.value, page: current, pageSize})
+    if (!res.data) return
+    renderData.value = res.data.list;
+    pagination.value.current = params.current;
+    pagination.value.total = res.data?.total;
+  } catch (err) {
+    console.error(err)
+  } finally {
+    setLoading(false)
+  }
+}
+onMounted(async () => await fetchData(pagination.value))
 </script>
 
 <style scoped lang="less">

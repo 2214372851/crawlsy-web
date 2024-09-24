@@ -70,7 +70,7 @@
 <script setup lang="ts">
 import {onMounted, reactive, ref} from "vue";
 import Cookies from 'js-cookie'
-import {decrypt, encrypt} from "@/utils/aes";
+import {decrypt, encrypt} from "@/utils/crypt";
 import type {LoginResponse} from "@/api/modules/login";
 import {loginApi} from "@/api/modules/login";
 import useUserStore from "@/stores/modules/user";
