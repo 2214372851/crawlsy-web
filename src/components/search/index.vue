@@ -47,7 +47,11 @@
 import type {SearchOption} from "@/types/global";
 
 const emit = defineEmits(['submit', 'reset'])
-const {collapsed = false, searchOptions} = defineProps<{ collapsed: boolean,loading: boolean, searchOptions: SearchOption[] }>()
+const {collapsed = false, loading = false, searchOptions = []} = defineProps<{
+  collapsed: boolean,
+  loading: boolean,
+  searchOptions: SearchOption[]
+}>()
 type ExtractFields<T extends SearchOption[]> = T[number]['field'];
 type FieldValues = ExtractFields<typeof searchOptions>;
 type SearchFormData = {

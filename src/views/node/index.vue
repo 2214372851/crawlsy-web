@@ -1,5 +1,7 @@
 <template>
   <a-card id="show" :bordered="false" :style="{ width: '100%' }" title="节点管理">
+    <Search :loading="loading" :collapsed="collapsed" :search-options="searchOptions" v-model="formValue"
+            @reset="refreshData" @submit="fetchData"/>
     <a-space direction="vertical" size="medium" style="width: 100%">
       <a-grid :cols="{ xs: 1, sm: 4, md: 4, lg: 4, xl: 4, xxl: 4 }" :colGap="16" :rowGap="16" style="">
         <a-grid-item :span="2">
@@ -10,25 +12,33 @@
           </a-tabs>
         </a-grid-item>
         <a-grid-item suffix>
-          <a-space>
-            <a-tooltip content="切换布局">
-              <a-button @click="isList = !isList">
-                <template #icon>
-                  <icon-list v-if="isList"/>
-                  <icon-apps v-else/>
-                </template>
-              </a-button>
-            </a-tooltip>
-            <a-input-search placeholder="搜索" style="margin-left: auto"/>
-          </a-space>
-
+          <div style="display:flex;justify-content: end;">
+            <a-space>
+              <a-tooltip content="切换布局">
+                <a-button @click="isList = !isList">
+                  <template #icon>
+                    <icon-list v-if="isList"/>
+                    <icon-apps v-else/>
+                  </template>
+                </a-button>
+              </a-tooltip>
+              <a-tooltip content="折叠/展开">
+                <a-button @click="collapsed = !collapsed">
+                  <template #icon>
+                    <icon-to-bottom v-if="collapsed"/>
+                    <icon-to-top v-else/>
+                  </template>
+                </a-button>
+              </a-tooltip>
+              <!--            <a-input-search placeholder="搜索" style="margin-left: auto"/>-->
+            </a-space>
+          </div>
         </a-grid-item>
       </a-grid>
-
       <a-spin style="width: 100%" :loading="loading">
         <a-empty v-if="renderData.length == 0"/>
         <div v-else>
-          <a-grid v-if="!isList" :cols="{ xs: 1, sm: 2, md: 3, lg: 3, xl: 3, xxl: 3 }" :colGap="16" :rowGap="16">
+          <a-grid v-if="!isList" :cols="{ xs: 1, sm: 1, md: 2, lg: 3, xl: 3, xxl: 3 }" :colGap="16" :rowGap="16">
             <a-grid-item v-for="item in renderData" :key="item.id">
               <a-card>
                 <a-space direction="vertical" fill>
@@ -53,7 +63,7 @@
                     <template #description>
                       <a-space direction="vertical">
                         <div>
-                          <a-tag color="arcoblue">{{ item.nodeUid }}</a-tag>
+                          <a-tag color="blue">{{ item.nodeUid }}</a-tag>
                         </div>
                         <div>
                           创建时间：
@@ -67,7 +77,9 @@
                     </template>
                   </a-card-meta>
 
-                  <a-progress size="large" type="circle" :percent="0.4" show-text/>
+                  <div style="width: 100%; display: flex;justify-content: end;">
+                    <a-progress size="large" :percent="0.4" show-text/>
+                  </div>
                   <a-space style="">
                     <a-button type="primary">查看</a-button>
                     <a-button type="primary">编辑</a-button>
@@ -98,12 +110,12 @@
                   </a-space>
                 </template>
                 <template #description>
-                  更新时间：{{ item.updateTime }}
+                  更新时间：<a-tag>{{ item.updateTime }}</a-tag>
                   <br>
-                  创建时间：{{ item.createTime }}
+                  创建时间：<a-tag>{{ item.createTime }}</a-tag>
                   <br>
                   节点标识：
-                  <a-tag>{{ item.nodeUid }}</a-tag>
+                  <a-tag color="blue">{{ item.nodeUid }}</a-tag>
 
                 </template>
               </a-list-item-meta>
@@ -136,7 +148,20 @@ import {onMounted, type Ref, ref} from "vue";
 import useLoading from "@/hooks/loading";
 import {type NodeItem, nodeListApi} from "@/api/modules/node";
 import type {PaginationProps} from "@arco-design/web-vue";
+import Search from "@/components/search/index.vue";
 
+const searchOptions = ref([
+  {
+    label: '名称',
+    type: 'input',
+    field: 'name',
+  },
+  {
+    label: '节点标识',
+    type: 'input',
+    field: 'nodeUid',
+  }
+])
 const basePagination = {
   current: 1,
   pageSize: 5
@@ -148,9 +173,10 @@ const pagination: Ref<PaginationProps> = ref({
   total: 0,
   ...basePagination
 })
-const formValue = ref({})
+const formValue = ref<any>({})
 const renderData = ref<NodeItem[]>([])
 const isList = ref(true);
+const collapsed = ref(true);
 const count = ref(10);
 
 const {loading, setLoading} = useLoading();
@@ -168,6 +194,11 @@ const handleTabChange = async (key: string | number) => {
   }
   await fetchData(pagination.value)
 };
+const refreshData = async () => {
+  setLoading(true)
+  formValue.value = {}
+  await fetchData(pagination.value)
+}
 const fetchData = async (params: any = basePagination) => {
   setLoading(true);
   try {

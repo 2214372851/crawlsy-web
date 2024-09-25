@@ -69,9 +69,9 @@ import type {SearchOption} from "@/types/global";
 const editFormRef = useTemplateRef('editFormRef')
 const addFormRef = useTemplateRef('addFormRef')
 // TODO: 获取爬虫列表
-const spiderOptions = []
+const spiderOptions: { label: string, value: string}[] = []
 // TODO: 获取节点列表
-const nodeOptions = []
+const nodeOptions: { label: string, value: string}[] = []
 const statusOptions = [
   {
     label: "可用",
