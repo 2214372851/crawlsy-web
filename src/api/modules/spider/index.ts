@@ -1,5 +1,5 @@
 import {del, get, post, put} from "@/api/request";
-import type {ApiListResponse, ApiResponse} from "@/types/global";
+import type {ApiListResponse, ApiResponse, menuOptionData} from "@/types/global";
 
 
 export type SpiderItem = {
@@ -27,6 +27,9 @@ export type SpiderAddEditData = {
     name: string,
     status: boolean
 }
+
+export const spiderOptionApi = () => get<ApiResponse<ApiListResponse<menuOptionData>>>('/spiderOption/')
+
 export const spiderListApi = (params: querySpiderData) => get<ApiResponse<ApiListResponse<SpiderItem>>>('/spider/', params)
 
 export const spiderInfoApi = (id: string) => get<ApiResponse<SpiderItem>>(`/spider/${id}/`)

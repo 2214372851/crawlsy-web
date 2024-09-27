@@ -51,6 +51,12 @@ interface AnyObject {
 }
 
 type Method = 'GET' | 'POST' | 'PUT' | 'DELETE'
+
+type menuOptionData = {
+    id: number,
+    name: string
+}
+
 export type {
     MenuItem,
     BreadcrumbItem,
@@ -61,4 +67,5 @@ export type {
     ApiListResponse,
     AnyObject,
     Method,
+    menuOptionData,
 }

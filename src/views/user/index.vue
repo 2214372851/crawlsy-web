@@ -37,7 +37,7 @@
         <a-form-item field="role" label="角色">
           <a-select
               v-model="formValue.data.role"
-              :options="options"
+              :options="roleOptions"
               :field-names="{label: 'name', value: 'id'}"
               value-key="name"
               multiple
@@ -65,7 +65,7 @@
         <a-form-item field="role" label="角色">
           <a-select
               v-model="formValue.data.role"
-              :options="options"
+              :options="roleOptions"
               :field-names="{label: 'name', value: 'id'}"
               value-key="name"
               multiple
@@ -79,22 +79,14 @@
 <script setup lang="ts">
 import SearchTable from "@/components/search-table/index.vue";
 import {userAddApi, userDelApi, userInfoApi, userListApi, userUpdateApi} from "@/api/modules/user";
-import {ref, type Ref, type ShallowRef, useTemplateRef} from "vue";
+import {onMounted, ref, type Ref, type ShallowRef, useTemplateRef} from "vue";
 import type {SearchOption} from "@/types/global";
+import {roleOptionApi} from "@/api/modules/role";
 
 const editFormRef: Readonly<ShallowRef<unknown | null>> = useTemplateRef('editFormRef')
 const addFormRef = useTemplateRef('addFormRef')
 // TODO 从数据库获取
-const options = [
-  {
-    name: '管理员',
-    id: 1
-  },
-  {
-    name: '普通用户',
-    id: 2
-  }
-]
+const roleOptions = ref([])
 const statusOptions = [
   {
     label: '正常',
@@ -152,6 +144,13 @@ const columns = [
     width: 160
   }
 ]
+const getRoleOption = async () => {
+  const res = await roleOptionApi()
+  roleOptions.value = res.data.list
+}
+onMounted(async () => {
+  await getRoleOption()
+})
 </script>
 
 <style scoped lang="less">

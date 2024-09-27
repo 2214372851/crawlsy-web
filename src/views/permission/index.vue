@@ -82,8 +82,9 @@ import {
   permissionListApi,
   permissionUpdateApi
 } from "@/api/modules/permission";
-import {ref, type Ref, useTemplateRef} from "vue";
+import {onMounted, ref, type Ref, useTemplateRef} from "vue";
 import type {SearchOption} from "@/types/global";
+import {menuOptionApi} from "@/api/modules/menu";
 
 const editFormRef = useTemplateRef('editFormRef')
 const addFormRef = useTemplateRef('addFormRef')
@@ -101,17 +102,7 @@ const options = [
     name: 'DELETE'
   }
 ]
-// TODO 从数据库获取
-const menuOptions = [
-  {
-    name: '用户管理',
-    id: 1
-  },
-  {
-    name: '权限管理',
-    id: 2
-  }
-]
+const menuOptions = ref([])
 const statusOptions = [
   {
     label: 'GET',
@@ -172,6 +163,15 @@ const columns = [
     width: 160
   }
 ]
+const getMenuOption = async () => {
+  const {data, code} = await menuOptionApi()
+  if (code === 0) {
+    menuOptions.value = data.list
+  }
+}
+onMounted(async () => {
+  await getMenuOption()
+})
 </script>
 
 <style scoped lang="less">

@@ -1,5 +1,5 @@
 import {del, get, post, put} from "@/api/request";
-import type {ApiListResponse, ApiResponse} from "@/types/global";
+import type {ApiListResponse, ApiResponse, menuOptionData} from "@/types/global";
 
 
 export type NodeItem = {
@@ -24,6 +24,9 @@ export type NodeAddEditData = {
     name: string,
     nodeUid?: string
 }
+
+export const nodeOptionApi = () => get<ApiResponse<ApiListResponse<menuOptionData>>>('/nodeOption/')
+
 
 export const nodeListApi = (params: queryNodeData) => get<ApiResponse<ApiListResponse<NodeItem>>>('/node/', params)
 

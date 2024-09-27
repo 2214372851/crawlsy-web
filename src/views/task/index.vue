@@ -17,6 +17,12 @@
               v-model="formValue.data.name"
               placeholder="请输入名称..."/>
         </a-form-item>
+        <a-form-item field="isTiming" label="定时">
+          <a-select
+              v-model="formValue.data.isTiming"
+              :options="timingOptions"
+              placeholder="请选择定时..."/>
+        </a-form-item>
         <a-form-item field="cronExpression" label="cron表达式">
           <a-input
               v-model="formValue.data.cronExpression"
@@ -26,24 +32,17 @@
           <a-select
               v-model="formValue.data.taskSpider"
               :options="spiderOptions"
+              :field-names="{label: 'name', value: 'id'}"
+              value-key="name"
               placeholder="请选择爬虫..."/>
-        </a-form-item>
-        <a-form-item field="isTiming" label="定时">
-          <a-select
-              v-model="formValue.data.isTiming"
-              :options="timingOptions"
-              placeholder="请选择定时..."/>
-        </a-form-item>
-        <a-form-item field="status" label="状态">
-          <a-select
-              v-model="formValue.data.status"
-              :options="statusOptions"
-              placeholder="请选择状态..."/>
         </a-form-item>
         <a-form-item field="taskNodes" label="任务节点">
           <a-select
               v-model="formValue.data.taskNodes"
               :options="nodeOptions"
+              :field-names="{label: 'name', value: 'id'}"
+              value-key="name"
+              multiple
               placeholder="请选择节点..."/>
         </a-form-item>
       </a-form>
@@ -55,23 +54,51 @@
               v-model="formValue.data.name"
               placeholder="请输入名称..."/>
         </a-form-item>
+        <a-form-item field="isTiming" label="定时任务">
+          <a-select
+              v-model="formValue.data.isTiming"
+              :options="timingOptions"
+              placeholder="请选择是否定时..."/>
+        </a-form-item>
+        <a-form-item field="cronExpression" label="cron表达式">
+          <a-input
+              v-model="formValue.data.cronExpression"
+              placeholder="请输入定时表达式..."/>
+        </a-form-item>
+        <a-form-item field="taskSpider" label="爬虫">
+          <a-select
+              v-model="formValue.data.taskSpider"
+              :options="spiderOptions"
+              :field-names="{label: 'name', value: 'id'}"
+              value-key="name"
+              placeholder="请选择爬虫..."/>
+        </a-form-item>
+        <a-form-item field="taskNodes" label="任务节点">
+          <a-select
+              v-model="formValue.data.taskNodes"
+              :options="nodeOptions"
+              :field-names="{label: 'name', value: 'id'}"
+              value-key="name"
+              multiple
+              placeholder="请选择节点..."/>
+        </a-form-item>
       </a-form>
     </template>
   </SearchTable>
 </template>
 
 <script setup lang="ts">
-import {taskListApi, taskAddApi, taskDelApi, taskInfoApi, taskUpdateApi} from "@/api/modules/task";
+import {taskAddApi, taskDelApi, taskInfoApi, taskListApi, taskUpdateApi} from "@/api/modules/task";
 import SearchTable from "@/components/search-table/index.vue";
-import {ref, type Ref, useTemplateRef} from "vue";
+import {onMounted, ref, type Ref, useTemplateRef} from "vue";
 import type {SearchOption} from "@/types/global";
+import {spiderOptionApi} from "@/api/modules/spider";
+import {nodeOptionApi} from "@/api/modules/node";
 
 const editFormRef = useTemplateRef('editFormRef')
 const addFormRef = useTemplateRef('addFormRef')
-// TODO: 获取爬虫列表
-const spiderOptions: { label: string, value: string}[] = []
-// TODO: 获取节点列表
-const nodeOptions: { label: string, value: string}[] = []
+const spiderOptions = ref([])
+const nodeOptions = ref([])
 const statusOptions = [
   {
     label: "可用",
@@ -116,7 +143,6 @@ const searchOptions: Ref<SearchOption[]> = ref([
     options: timingOptions
   },
 ])
-
 const columns = [
   {
     title: '名称',
@@ -157,6 +183,22 @@ const columns = [
     width: 160
   }
 ]
+const getSpiderOption = async () => {
+  const {data, code} = await spiderOptionApi()
+  if (code === 0) {
+    spiderOptions.value = data.list
+  }
+}
+const getNodeOption = async () => {
+  const {data, code} = await nodeOptionApi()
+  if (code === 0) {
+    nodeOptions.value = data.list
+  }
+}
+onMounted(async () => {
+  await getSpiderOption()
+  await getNodeOption()
+})
 </script>
 
 <style scoped lang="less">
