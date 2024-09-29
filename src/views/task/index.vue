@@ -11,7 +11,7 @@
       :edit-form-ref="editFormRef"
       :add-form-ref="addFormRef">
     <template #edit-content="formValue">
-      <a-form ref="addFormRef" :model="formValue">
+      <a-form ref="editFormRef" :model="formValue">
         <a-form-item field="name" label="名称">
           <a-input
               v-model="formValue.data.name"
@@ -154,7 +154,7 @@ const columns = [
   },
   {
     title: '爬虫',
-    dataIndex: 'spider.name',
+    dataIndex: 'spiderName',
   },
   {
     title: '定时任务',

@@ -1,5 +1,5 @@
 import {del, get, post, put} from "@/api/request";
-import type {ApiListResponse, ApiResponse} from "@/types/global";
+import type {ApiListResponse, ApiResponse, menuOptionData} from "@/types/global";
 
 
 export type PermissionItem = {
@@ -24,6 +24,7 @@ export type PermissionAddEditData = {
     menu: number
 }
 
+export const permissionOptionApi = () => get<ApiResponse<ApiListResponse<menuOptionData>>>('/permissionOption/')
 
 export const permissionListApi = (params: queryPermissionData) => get<ApiResponse<ApiListResponse<PermissionItem>>>('/permission/', params)
 

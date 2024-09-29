@@ -145,8 +145,10 @@ const columns = [
   }
 ]
 const getRoleOption = async () => {
-  const res = await roleOptionApi()
-  roleOptions.value = res.data.list
+  const {data, code} = await roleOptionApi()
+  if (code === 0) {
+    roleOptions.value = data.list
+  }
 }
 onMounted(async () => {
   await getRoleOption()

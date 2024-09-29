@@ -68,31 +68,49 @@ const menus = [
     "path": "/spider"
   },
   {
-    "id": 6,
-    "createTime": "2024-07-07 14:08:03",
-    "updateTime": "2024-07-07 14:08:03",
-    "parent": null,
-    "name": "用户管理",
-    "icon": "IconUser",
-    "path": "/user"
-  },
-  {
-    "id": 6,
-    "createTime": "2024-07-07 14:08:03",
-    "updateTime": "2024-07-07 14:08:03",
-    "parent": null,
-    "name": "权限管理",
-    "icon": "iconLock",
-    "path": "/permission"
-  },
-  {
-    "id": 6,
+    "id": 8,
     "createTime": "2024-07-07 14:08:03",
     "updateTime": "2024-07-07 14:08:03",
     "parent": null,
     "name": "任务管理",
     "icon": "iconSelectAll",
     "path": "/task"
+  },
+  {
+    "id": 9,
+    "createTime": "2024-07-07 14:08:03",
+    "updateTime": "2024-07-07 14:08:03",
+    "parent": null,
+    "name": "系统管理",
+    "icon": "IconSettings",
+    "path": "/user"
+  },
+  {
+    "id": 6,
+    "createTime": "2024-07-07 14:08:03",
+    "updateTime": "2024-07-07 14:08:03",
+    "parent": 9,
+    "name": "用户管理",
+    "icon": "IconUser",
+    "path": "/user"
+  },
+  {
+    "id": 7,
+    "createTime": "2024-07-07 14:08:03",
+    "updateTime": "2024-07-07 14:08:03",
+    "parent": 9,
+    "name": "权限管理",
+    "icon": "iconLock",
+    "path": "/permission"
+  },
+  {
+    "id": 10,
+    "createTime": "2024-07-07 14:08:03",
+    "updateTime": "2024-07-07 14:08:03",
+    "parent": 9,
+    "name": "角色管理",
+    "icon": "iconLock",
+    "path": "/role"
   },
 ]
 

@@ -81,6 +81,9 @@
       </template>
       <template #optional="{ record }">
         <a-space>
+          <a-button v-if="isLook" type="primary" status="normal" @click="lookHandle?.(record.uid ?? record.id)">
+            查看
+          </a-button>
           <a-button status="normal" @click="editStartHandle(record.uid ?? record.id)">
             修改
           </a-button>
@@ -97,7 +100,8 @@
         width="600px"
         v-model:visible="editVisible"
         @cancel="editHandleCancel"
-        :on-before-ok="editHandleBeforeOk" unmountOnClose>
+        :on-before-ok="editHandleBeforeOk"
+        unmountOnClose>
       <slot name="edit-content" :data="editFormValue" @update-data="editUpdateData"/>
     </a-modal>
     <a-modal
@@ -127,8 +131,10 @@ const addFormValue = ref<Record<string, any>>({})
 const editItemKey = ref('')
 const editVisible = ref(false)
 const addVisible = ref(false)
-const {rowKey = 'id', dataApi, editApi, infoApi, addApi, delApi, editFormRef, addFormRef} = defineProps<{
+const {rowKey = 'id', isLook = false, dataApi, editApi, infoApi, addApi, delApi, editFormRef, addFormRef} = defineProps<{
   name: string,
+  isLook?: boolean,
+  lookHandle?: (id: string) => void
   rowKey?: string,
   searchOptions: SearchOption[],
   columns: { title: string, dataIndex?: string, slotName?: string }[],

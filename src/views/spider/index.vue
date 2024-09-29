@@ -8,6 +8,8 @@
       :info-api="spiderInfoApi"
       :add-api="spiderAddApi"
       :del-api="spiderDelApi"
+      :is-look="true"
+      :look-handle="lookHandle"
       :edit-form-ref="editFormRef"
       :add-form-ref="addFormRef">
     <template #edit-content="formValue">
@@ -43,8 +45,9 @@ import SearchTable from "@/components/search-table/index.vue";
 import {spiderAddApi, spiderDelApi, spiderInfoApi, spiderUpdateApi, spiderListApi} from "@/api/modules/spider";
 import {ref, type Ref, useTemplateRef} from "vue";
 import type {SearchOption} from "@/types/global";
+import {useRouter} from "vue-router";
 
-
+const router = useRouter()
 const editFormRef = useTemplateRef('editFormRef')
 const addFormRef = useTemplateRef('addFormRef')
 const statusOptions = [
@@ -80,7 +83,6 @@ const searchOptions: Ref<SearchOption[]> = ref([
     field: 'spiderUid',
   },
 ])
-
 const columns = [
   {
     title: '名称',
@@ -113,6 +115,9 @@ const columns = [
     width: 160
   }
 ]
+const lookHandle = (id: string) => {
+  router.push({path: '/spider/webIde', query: {id: id}})
+}
 </script>
 
 <style scoped lang="less">
