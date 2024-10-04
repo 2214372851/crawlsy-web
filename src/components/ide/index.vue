@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div style="height: 100%">
     <a-space>
       <a-tooltip content="展开/收缩文件栏">
         <a-button @click="handleCollapsed">
@@ -31,7 +31,8 @@
         </a-button>
       </a-tooltip>
       <a-tooltip content="语言">
-        <a-select v-model="language" :options="langOptions" :style="{width:'140px'}" placeholder="选择语言" allow-search/>
+        <a-select v-model="language" :options="langOptions" :style="{width:'140px'}" placeholder="选择语言"
+                  allow-search/>
       </a-tooltip>
     </a-space>
     <a-split
@@ -39,17 +40,21 @@
         v-model:size="splitSize">
       <template #first>
         <a-tree
-            :data="treeData"
+            :data="fileTreeOption"
             :blockNode="true"
             size="medium"
-            style="margin-right: 20px;">
-          <template #icon>
-            <IconStar/>
-          </template>
+            :load-more="loadDir"
+            @select="getFileContent as any"
+            style="margin-right: 20px;"
+            show-line>
         </a-tree>
       </template>
       <template #second>
-        <a-tabs type="card" v-model:active-key="tabKey" justify :editable="true" @delete="handleDelete" @change="handleTabChange">
+        <div style="height: 100%;display: flex;align-items: center" v-if="codeVals.length === 0">
+          <a-empty/>
+        </div>
+        <a-tabs v-else type="card" v-model:active-key="tabKey" justify :editable="true" @delete="handleDelete"
+                @change="handleTabChange">
           <a-tab-pane v-for="item in codeVals" :key="item.key">
             <template #title>
               <icon-code/>
@@ -70,11 +75,18 @@
 </template>
 
 <script setup lang="ts">
-import {h, ref} from "vue";
-import type {IdeTabItem} from "@/types/global";
-import {IconDriveFile} from "@arco-design/web-vue/es/icon";
+import {h, ref, type VNode} from "vue";
+import type {ApiResponse, IdeTabItem} from "@/types/global";
 import MonacoEditor from "@/components/monacoEditor/index.vue";
+import type {TreeNode} from "echarts/types/src/data/Tree";
+import type {TreeNodeData} from "@arco-design/web-vue";
+import * as diagnostics_channel from "node:diagnostics_channel";
 
+const {fileTreeOption, loadFileApi} = defineProps<{
+  fileTreeOption: { title: string, key: string, icon: () => VNode, isLeaf?: boolean }[],
+  loadDir: (nodeData) => Promise<undefined>,
+  loadFileApi: (nodeData) => Promise<ApiResponse<string>>,
+}>()
 let lastSplitSize = 240
 const tabKey = ref('2024')
 const splitSize = ref(240)
@@ -98,67 +110,7 @@ const langOptions = [
   "razor",
 
 ]
-const codeVals = ref<IdeTabItem[]>([
-  {
-    key: "main",
-    name: "对酒当歌人生几何.js",
-    value: "const a = 1\n\nconsole.log(a)",
-  },
-  {
-    key: "2024",
-    name: "Java是世界上最好的语言.py",
-    value: "import requests\n\nres = requests.get('https://www.baidu.com')\n\nprint(res.text)",
-  },
-])
-
-const treeData = [
-  {
-    title: 'Trunk',
-    key: 'node1',
-    children: [
-      {
-        title: 'Leaf',
-        key: 'node2',
-      },
-    ],
-  },
-  {
-    title: 'Trunk',
-    key: 'node3',
-    children: [
-      {
-        title: 'Leaf',
-        key: 'node4',
-        icon: () => h(IconDriveFile),
-      },
-      {
-        title: 'Leaf',
-        key: 'node5',
-        icon: () => h(IconDriveFile),
-      },
-      {
-        title: 'Leaf',
-        key: 'node6',
-        icon: () => h(IconDriveFile),
-      },
-      {
-        title: 'Leaf',
-        key: 'node7',
-        icon: () => h(IconDriveFile),
-      },
-      {
-        title: 'Leaf',
-        key: 'node8',
-        icon: () => h(IconDriveFile),
-      },
-      {
-        title: 'Leaf',
-        key: 'node9',
-        icon: () => h(IconDriveFile),
-      },
-    ],
-  },
-];
+const codeVals = ref<IdeTabItem[]>([])
 
 const handleCollapsed = () => {
   if (splitSize.value !== 0) {
@@ -189,6 +141,18 @@ const handleTabChange = (key: string | number) => {
     language.value = "python"
   }
 };
+const getFileContent = async (seletcedKeys: string[], treeData: { node: TreeNodeData }) => {
+  if (seletcedKeys.length === 0) return
+  if (codeVals.value.filter(item => item.key === seletcedKeys[0]).length > 0) return
+  const {code, data} = await loadFileApi(seletcedKeys[0])
+  if (code !== 0) return
+  codeVals.value.push({
+    key: seletcedKeys[0],
+    name: treeData.node.title as string,
+    value: data
+  })
+  tabKey.value = seletcedKeys[0]
+}
 </script>
 
 <script lang="ts">
@@ -201,7 +165,8 @@ export default {
 .ide-box {
   display: flex;
   width: 100%;
-  height: 400px;
+  min-height: 400px;
+  height: 100%;
   margin-top: 10px;
 }
 
