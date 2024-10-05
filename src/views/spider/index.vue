@@ -116,7 +116,7 @@ const columns = [
   }
 ]
 const lookHandle = (id: string) => {
-  router.push({path: '/spider/webIde', query: {id: id}})
+  router.push({path: '/webIde', query: {id: id}})
 }
 </script>
 

@@ -80,13 +80,12 @@
 import SearchTable from "@/components/search-table/index.vue";
 import {userAddApi, userDelApi, userInfoApi, userListApi, userUpdateApi} from "@/api/modules/user";
 import {onMounted, ref, type Ref, type ShallowRef, useTemplateRef} from "vue";
-import type {SearchOption} from "@/types/global";
+import type {menuOptionData, SearchOption} from "@/types/global";
 import {roleOptionApi} from "@/api/modules/role";
 
 const editFormRef: Readonly<ShallowRef<unknown | null>> = useTemplateRef('editFormRef')
 const addFormRef = useTemplateRef('addFormRef')
-// TODO 从数据库获取
-const roleOptions = ref([])
+const roleOptions = ref<menuOptionData[]>([])
 const statusOptions = [
   {
     label: '正常',
@@ -147,7 +146,7 @@ const columns = [
 const getRoleOption = async () => {
   const {data, code} = await roleOptionApi()
   if (code === 0) {
-    roleOptions.value = data.list
+    roleOptions.value = data?.list as menuOptionData[]
   }
 }
 onMounted(async () => {

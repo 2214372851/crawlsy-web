@@ -83,7 +83,7 @@ import {
   permissionUpdateApi
 } from "@/api/modules/permission";
 import {onMounted, ref, type Ref, useTemplateRef} from "vue";
-import type {SearchOption} from "@/types/global";
+import type {menuOptionData, SearchOption} from "@/types/global";
 import {menuOptionApi} from "@/api/modules/menu";
 
 const editFormRef = useTemplateRef('editFormRef')
@@ -102,7 +102,7 @@ const options = [
     name: 'DELETE'
   }
 ]
-const menuOptions = ref([])
+const menuOptions = ref<menuOptionData[]>([])
 const statusOptions = [
   {
     label: 'GET',
@@ -166,7 +166,7 @@ const columns = [
 const getMenuOption = async () => {
   const {data, code} = await menuOptionApi()
   if (code === 0) {
-    menuOptions.value = data.list
+    menuOptions.value = data?.list as menuOptionData[]
   }
 }
 onMounted(async () => {

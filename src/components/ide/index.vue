@@ -10,28 +10,18 @@
         </a-button>
       </a-tooltip>
       <a-tooltip content="保存">
-        <a-button>
+        <a-button @click="saveChange">
           <template #icon>
             <icon-save/>
           </template>
         </a-button>
       </a-tooltip>
-      <a-tooltip content="新建">
-        <a-button>
-          <template #icon>
-            <icon-plus/>
-          </template>
-        </a-button>
-      </a-tooltip>
-      <a-tooltip content="删除">
-        <a-button>
-          <template #icon>
-            <icon-delete/>
-          </template>
-        </a-button>
-      </a-tooltip>
       <a-tooltip content="语言">
         <a-select v-model="language" :options="langOptions" :style="{width:'140px'}" placeholder="选择语言"
+                  allow-search/>
+      </a-tooltip>
+      <a-tooltip content="主题">
+        <a-select v-model="theme" :options="themeOptions" :style="{width:'140px'}" placeholder="选择主题"
                   allow-search/>
       </a-tooltip>
     </a-space>
@@ -41,12 +31,23 @@
       <template #first>
         <a-tree
             :data="fileTreeOption"
-            :blockNode="true"
+            blockNode
             size="medium"
             :load-more="loadDir"
             @select="getFileContent as any"
             style="margin-right: 20px;"
             show-line>
+          <template #title="nodeData">
+            <a-dropdown trigger="contextMenu" alignPoint :style="{display:'block'}">
+              <div style="overflow: hidden;white-space: nowrap">{{ nodeData?.title }}</div>
+              <template #content>
+                <a-doption @click="addChange(nodeData.key)">新建</a-doption>
+                <a-doption @click="delChange(nodeData.key)">删除</a-doption>
+                <a-doption @click="renameChange(nodeData.key)">重命名</a-doption>
+              </template>
+            </a-dropdown>
+
+          </template>
         </a-tree>
       </template>
       <template #second>
@@ -62,7 +63,10 @@
             </template>
             <div style="height: 100%;width: 100%;overflow:auto;">
               <MonacoEditor
+                  :key="theme"
+                  :theme="theme"
                   v-model="item.value"
+                  @save-change="saveChange"
                   :language="language"
                   width="100%"
                   height="100%"/>
@@ -75,21 +79,34 @@
 </template>
 
 <script setup lang="ts">
-import {h, ref, type VNode} from "vue";
+import {onMounted, onUnmounted, ref} from "vue";
 import type {ApiResponse, IdeTabItem} from "@/types/global";
 import MonacoEditor from "@/components/monacoEditor/index.vue";
-import type {TreeNode} from "echarts/types/src/data/Tree";
-import type {TreeNodeData} from "@arco-design/web-vue";
-import * as diagnostics_channel from "node:diagnostics_channel";
+import {Modal, type TreeNodeData} from "@arco-design/web-vue";
 
 const {fileTreeOption, loadFileApi} = defineProps<{
-  fileTreeOption: { title: string, key: string, icon: () => VNode, isLeaf?: boolean }[],
-  loadDir: (nodeData) => Promise<undefined>,
-  loadFileApi: (nodeData) => Promise<ApiResponse<string>>,
+  fileTreeOption: TreeNodeData[],
+  loadDir: (nodeData: TreeNodeData) => any,
+  loadFileApi: (nodeData: string) => Promise<ApiResponse<string>>,
 }>()
 let lastSplitSize = 240
-const tabKey = ref('2024')
+const tabKey = ref('')
 const splitSize = ref(240)
+const theme = ref<"vs" | "hc-black" | "vs-dark">('vs')
+const themeOptions = [
+  {
+    label: 'vs',
+    value: 'vs'
+  },
+  {
+    label: 'hc-black',
+    value: 'hc-black'
+  },
+  {
+    label: 'vs-dark',
+    value: 'vs-dark'
+  }
+]
 const language = ref("python")
 const langOptions = [
   "python",
@@ -111,7 +128,7 @@ const langOptions = [
 
 ]
 const codeVals = ref<IdeTabItem[]>([])
-
+const emit = defineEmits(['save-change', 'del-change', 'add-change', 'rename-change'])
 const handleCollapsed = () => {
   if (splitSize.value !== 0) {
     lastSplitSize = splitSize.value
@@ -143,16 +160,61 @@ const handleTabChange = (key: string | number) => {
 };
 const getFileContent = async (seletcedKeys: string[], treeData: { node: TreeNodeData }) => {
   if (seletcedKeys.length === 0) return
-  if (codeVals.value.filter(item => item.key === seletcedKeys[0]).length > 0) return
+  if (codeVals.value.filter(item => item.key === seletcedKeys[0]).length > 0) {
+    tabKey.value = seletcedKeys[0]
+    return
+  }
   const {code, data} = await loadFileApi(seletcedKeys[0])
   if (code !== 0) return
   codeVals.value.push({
     key: seletcedKeys[0],
     name: treeData.node.title as string,
-    value: data
+    value: data as string
   })
   tabKey.value = seletcedKeys[0]
 }
+const saveChange = () => {
+  const content = codeVals.value.filter(item => item.key === tabKey.value)[0].value
+  emit('save-change', tabKey.value, content)
+}
+const delChange = async (key: string) => {
+  Modal.open({
+    title: '操作通知',
+    content: '确认删除资源吗？',
+    onOk: async () => {
+      emit('del-change', key)
+    }
+  });
+
+}
+const addChange = async (key: string) => {
+  emit('add-change', key)
+}
+const renameChange = async (key: string) => {
+  emit('rename-change', key)
+}
+
+onMounted(() => {
+  window.onbeforeunload = function (e) {
+    // @ts-ignore
+    e = e || window.event;
+    // 兼容IE8和Firefox 4之前的版本
+    if (e) {
+      e.returnValue = '关闭提示';
+    }
+    // Chrome, Safari, Firefox 4+, Opera 12+ , IE 9+
+    return '关闭提示';
+  }
+  const themeValue = document.body.getAttribute('arco-theme')
+  if (!themeValue) {
+    theme.value = 'vs'
+  } else {
+    theme.value = 'vs-dark'
+  }
+})
+onUnmounted(() => {
+  window.onbeforeunload = null
+})
 </script>
 
 <script lang="ts">
@@ -172,5 +234,9 @@ export default {
 
 :deep(.arco-tabs-content) {
   padding: 0 !important;
+}
+
+:deep(.arco-tree-node-title-text) {
+  width: 100%;
 }
 </style>

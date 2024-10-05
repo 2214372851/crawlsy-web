@@ -10,14 +10,17 @@
         </svg>
         <div style="text-align: center;margin-bottom: 20px;font-size: 24px">Sorry，页面不见了～</div>
         <div style="width: 100%;display: flex;justify-content: center">
-            <a-button type="primary" @click="goBack">Go Back</a-button>
+            <a-button type="primary" @click="goHome">Go Home</a-button>
         </div>
     </div>
 </template>
 <script setup lang="ts">
+import {useRouter} from "vue-router";
 
-const goBack = () => {
-    window.history.back()
+const router = useRouter()
+
+const goHome = () => {
+  router.push({path: '/'})
 }
 </script>
 <style scoped lang="less">

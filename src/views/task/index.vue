@@ -91,14 +91,14 @@
 import {taskAddApi, taskDelApi, taskInfoApi, taskListApi, taskUpdateApi} from "@/api/modules/task";
 import SearchTable from "@/components/search-table/index.vue";
 import {onMounted, ref, type Ref, useTemplateRef} from "vue";
-import type {SearchOption} from "@/types/global";
+import type {menuOptionData, SearchOption} from "@/types/global";
 import {spiderOptionApi} from "@/api/modules/spider";
 import {nodeOptionApi} from "@/api/modules/node";
 
 const editFormRef = useTemplateRef('editFormRef')
 const addFormRef = useTemplateRef('addFormRef')
-const spiderOptions = ref([])
-const nodeOptions = ref([])
+const spiderOptions = ref<menuOptionData[]>([])
+const nodeOptions = ref<menuOptionData[]>([])
 const statusOptions = [
   {
     label: "可用",
@@ -186,13 +186,13 @@ const columns = [
 const getSpiderOption = async () => {
   const {data, code} = await spiderOptionApi()
   if (code === 0) {
-    spiderOptions.value = data.list
+    spiderOptions.value = data?.list as menuOptionData[]
   }
 }
 const getNodeOption = async () => {
   const {data, code} = await nodeOptionApi()
   if (code === 0) {
-    nodeOptions.value = data.list
+    nodeOptions.value = data?.list as menuOptionData[]
   }
 }
 onMounted(async () => {

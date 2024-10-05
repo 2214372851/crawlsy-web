@@ -36,6 +36,14 @@ export default defineConfig({
         }
     },
     build: {
-        sourcemap: true
+        sourcemap: true,
+        rollupOptions: {
+            external: ['node:diagnostics_channel'],
+            output: {
+                globals: {
+                    'node:diagnostics_channel': 'node:diagnostics_channel'
+                }
+            }
+        }
     }
 })

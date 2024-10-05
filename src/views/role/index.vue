@@ -143,24 +143,27 @@ import {onMounted, type Ref, ref, useTemplateRef} from "vue";
 import useLoading from "@/hooks/loading";
 import {
   roleAddApi,
-  type RoleAddEditData, roleDelApi,
+  type RoleAddEditData,
+  roleDelApi,
   roleInfoApi,
   type RoleItem,
   roleListApi,
   roleUpdateApi
 } from "@/api/modules/role";
 import {Message, type PaginationProps} from "@arco-design/web-vue";
-import type {AnyObject} from "@/types/global";
+import type {AnyObject, ApiListResponse, menuOptionData} from "@/types/global";
 import {permissionOptionApi} from "@/api/modules/permission";
 
 
 const {loading, setLoading} = useLoading()
-const formValue = ref({})
-const editFormRef = useTemplateRef('editFormRef')
+const formValue = ref({
+  name: '',
+})
+const editFormRef = useTemplateRef<any>('editFormRef')
 const editVisible = ref(false)
-const addFormRef = useTemplateRef('addFormRef')
+const addFormRef = useTemplateRef<any>('addFormRef')
 const addVisible = ref(false)
-const editItemKey = ref('')
+const editItemKey = ref<number>()
 const renderData = ref<RoleItem[]>([])
 const basePagination = {
   current: 1,
@@ -173,7 +176,7 @@ const pagination: Ref<PaginationProps> = ref({
   total: 0,
   ...basePagination
 })
-const permissionOption = ref([])
+const permissionOption = ref<any[]>([])
 const editFormValue = ref<RoleAddEditData>({
   name: '',
   permissions: []
@@ -182,22 +185,22 @@ const addFormValue = ref<RoleAddEditData>({
   name: '',
   permissions: []
 })
-const editStartHandle = async (id: string) => {
+const editStartHandle = async (id: number) => {
   const {code, data} = await roleInfoApi(id)
   if (code !== 0) return
   editItemKey.value = id;
-  editFormValue.value = data;
+  editFormValue.value = data as any;
   editVisible.value = true;
 }
 const editHandleBeforeOk = async () => {
   try {
-    const {code, data} = await roleUpdateApi(editItemKey.value, editFormValue.value)
+    const {code, data} = await roleUpdateApi(editItemKey.value?.toString() as string, editFormValue.value)
     if (code === 3) {
       const fieldsValid: AnyObject = {}
       for (const key in data) {
         fieldsValid[key] = {
           status: 'error',
-          message: data[key][0]
+          message: (data as any)[key][0]
         }
       }
       editFormRef.value.setFields(fieldsValid)
@@ -231,10 +234,10 @@ const addHandleBeforeOk = async () => {
     const {code, data} = await roleAddApi(addFormValue.value)
     if (code === 3) {
       const fieldsValid: AnyObject = {}
-      for (const key in data) {
+      for (const key in data as any) {
         fieldsValid[key] = {
           status: 'error',
-          message: data[key][0]
+          message: (data as any)[key][0]
         }
       }
       addFormRef.value.setFields(fieldsValid)
@@ -275,7 +278,7 @@ const handleChangePage = (current: number) => {
 const getPermissionOption = async () => {
   const {data, code} = await permissionOptionApi()
   if (code === 0) {
-    permissionOption.value = data.list.map((item: any) => ({
+    permissionOption.value = (data as ApiListResponse<menuOptionData>).list.map((item: any) => ({
       value: item.id,
       label: item.name
     }))
@@ -297,7 +300,7 @@ const fetchData = async (params: any = basePagination) => {
     setLoading(false)
   }
 }
-const deleteHandle = async (id: string) => {
+const deleteHandle = async (id: number) => {
   try {
     const {code} = await roleDelApi(id)
     if (code !== 0) return
