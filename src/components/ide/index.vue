@@ -51,39 +51,43 @@
         </a-tree>
       </template>
       <template #second>
-        <div style="height: 100%;display: flex;align-items: center" v-if="codeVals.length === 0">
-          <a-empty/>
-        </div>
-        <a-tabs v-else type="card" v-model:active-key="tabKey" justify :editable="true" @delete="handleDelete"
-                @change="handleTabChange">
-          <a-tab-pane v-for="item in codeVals" :key="item.key">
-            <template #title>
-              <icon-code/>
-              {{ item.name }}
-            </template>
-            <div style="height: 100%;width: 100%;overflow:auto;">
-              <MonacoEditor
-                  :key="theme"
-                  :theme="theme"
-                  v-model="item.value"
-                  @save-change="saveChange"
-                  :language="language"
-                  width="100%"
-                  height="100%"/>
-            </div>
-          </a-tab-pane>
-        </a-tabs>
+        <a-spin :loading="loading" style="height: 100%;width: 100%" dot>
+          <div style="height: 100%;display: flex;align-items: center" v-if="codeVals.length === 0">
+            <a-empty/>
+          </div>
+          <a-tabs v-else type="card" v-model:active-key="tabKey" justify :editable="true" @delete="handleDelete">
+            <a-tab-pane v-for="item in codeVals" :key="item.key">
+              <template #title>
+                <icon-code/>
+                {{ item.name }}
+              </template>
+              <div style="height: 100%;width: 100%;overflow:auto;">
+                <MonacoEditor
+                    :key="theme"
+                    :theme="theme"
+                    v-model="item.value"
+                    @save-change="saveChange"
+                    :language="language"
+                    width="100%"
+                    height="100%"/>
+              </div>
+            </a-tab-pane>
+          </a-tabs>
+        </a-spin>
       </template>
     </a-split>
   </div>
 </template>
 
 <script setup lang="ts">
-import {onMounted, onUnmounted, ref} from "vue";
+import {onMounted, onUnmounted, ref, watch} from "vue";
 import type {ApiResponse, IdeTabItem} from "@/types/global";
 import MonacoEditor from "@/components/monacoEditor/index.vue";
 import {Modal, type TreeNodeData} from "@arco-design/web-vue";
+import {debounce} from "@/utils/func";
+import useLoading from "@/hooks/loading";
 
+const {loading, setLoading} = useLoading()
 const {fileTreeOption, loadFileApi} = defineProps<{
   fileTreeOption: TreeNodeData[],
   loadDir: (nodeData: TreeNodeData) => any,
@@ -140,43 +144,56 @@ const handleCollapsed = () => {
 const handleDelete = (key: string | number) => {
   codeVals.value = codeVals.value.filter(item => item.key !== key)
 };
-const handleTabChange = (key: string | number) => {
-  const fileName: string = codeVals.value.filter(item => item.key === key)[0].name
-  if (fileName.endsWith(".py")) {
-    language.value = "python"
-  } else if (fileName.endsWith(".js")) {
-    language.value = "javascript"
-  } else if (fileName.endsWith(".rs")) {
-    language.value = "javascript"
-  } else if (fileName.endsWith(".ts")) {
-    language.value = "javascript"
-  } else if (fileName.endsWith(".css")) {
-    language.value = "javascript"
-  } else if (fileName.endsWith(".go")) {
-    language.value = "javascript"
-  } else {
-    language.value = "python"
-  }
-};
+watch(
+    tabKey,
+    newValue => {
+      const fileName: string = codeVals.value.filter(item => item.key === newValue)[0].name
+      if (fileName.endsWith(".py")) {
+        language.value = "python"
+      } else if (fileName.endsWith(".js")) {
+        language.value = "javascript"
+      } else if (fileName.endsWith(".rs")) {
+        language.value = "rust"
+      } else if (fileName.endsWith(".ts")) {
+        language.value = "typescript"
+      } else if (fileName.endsWith(".css")) {
+        language.value = "css"
+      } else if (fileName.endsWith(".go")) {
+        language.value = "go"
+      } else if (fileName.endsWith(".html")) {
+        language.value = "html"
+      } else {
+        language.value = "python"
+      }
+    }
+)
 const getFileContent = async (seletcedKeys: string[], treeData: { node: TreeNodeData }) => {
   if (seletcedKeys.length === 0) return
   if (codeVals.value.filter(item => item.key === seletcedKeys[0]).length > 0) {
     tabKey.value = seletcedKeys[0]
     return
   }
-  const {code, data} = await loadFileApi(seletcedKeys[0])
-  if (code !== 0) return
-  codeVals.value.push({
-    key: seletcedKeys[0],
-    name: treeData.node.title as string,
-    value: data as string
-  })
-  tabKey.value = seletcedKeys[0]
+  setLoading(true)
+  try {
+    const {code, data} = await loadFileApi(seletcedKeys[0])
+    if (code !== 0) return
+    codeVals.value.push({
+      key: seletcedKeys[0],
+      name: treeData.node.title as string,
+      value: data as string
+    })
+    tabKey.value = seletcedKeys[0]
+  } finally {
+    setLoading(false)
+  }
+
 }
 const saveChange = () => {
-  const content = codeVals.value.filter(item => item.key === tabKey.value)[0].value
-  emit('save-change', tabKey.value, content)
+  saveChangeDebounce(tabKey.value, codeVals.value.filter(item => item.key === tabKey.value)[0].value)
 }
+const saveChangeDebounce = debounce((key: string, content: string) => {
+  emit('save-change', key, content)
+}, 1000)
 const delChange = async (key: string) => {
   Modal.open({
     title: '操作通知',

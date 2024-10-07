@@ -215,6 +215,7 @@ export default defineComponent({
           return new tsWorker();
         }
 
+
         const {default: EditorWorker} = await import('monaco-editor/esm/vs/editor/editor.worker?worker');
         return new EditorWorker();
       },
