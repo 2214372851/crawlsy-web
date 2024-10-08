@@ -147,6 +147,7 @@ const columns = [
   {
     title: '名称',
     dataIndex: 'name',
+    minWidth: 90
   },
   {
     title: '创建用户',
@@ -155,6 +156,7 @@ const columns = [
   {
     title: '爬虫',
     dataIndex: 'spiderName',
+    minWidth: 90
   },
   {
     title: '定时任务',

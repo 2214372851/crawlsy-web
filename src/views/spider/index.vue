@@ -87,6 +87,7 @@ const columns = [
   {
     title: '名称',
     dataIndex: 'name',
+    minWidth: 90
   },
   {
     title: '创建用户',
@@ -95,6 +96,7 @@ const columns = [
   {
     title: '爬虫标识',
     dataIndex: 'spiderUid',
+    width: 320
   },
   {
     title: '状态',
@@ -116,7 +118,7 @@ const columns = [
   }
 ]
 const lookHandle = (id: string) => {
-  router.push({path: '/webIde', query: {id: id}})
+  router.push({path: '/spider/details', query: {id: id}})
 }
 </script>
 

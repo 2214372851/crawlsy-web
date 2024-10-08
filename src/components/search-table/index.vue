@@ -1,6 +1,7 @@
 <template>
   <a-card :title="`${name}管理`" :header-style="{borderBottom: 'none'}">
-    <Search :loading="loading" :collapsed="collapsed" :search-options="searchOptions" v-model="formValue" @reset="refreshData"
+    <Search :loading="loading" :collapsed="collapsed" :search-options="searchOptions" v-model="formValue"
+            @reset="refreshData"
             @submit="fetchData"/>
     <a-divider/>
     <a-grid :cols="{ xs: 1, sm: 2, md: 2, lg: 2, xl: 2, xxl: 2 }" :colGap="12" :rowGap="16" class="table-toolbar">
@@ -63,7 +64,7 @@
         stripe
         filterable>
       <template #user="{ record }">
-        <a-tag>{{record.founderUser.username}}</a-tag>
+        <a-tag>{{ record.founderUser.username }}</a-tag>
       </template>
       <template #isTiming="{ record }">
         <a-tag color="green" v-if="record.isTiming">是</a-tag>
@@ -131,7 +132,17 @@ const addFormValue = ref<Record<string, any>>({})
 const editItemKey = ref('')
 const editVisible = ref(false)
 const addVisible = ref(false)
-const {rowKey = 'id', isLook = false, dataApi, editApi, infoApi, addApi, delApi, editFormRef, addFormRef} = defineProps<{
+const {
+  rowKey = 'id',
+  isLook = false,
+  dataApi,
+  editApi,
+  infoApi,
+  addApi,
+  delApi,
+  editFormRef,
+  addFormRef
+} = defineProps<{
   name: string,
   isLook?: boolean,
   lookHandle?: (id: string) => void
@@ -216,7 +227,7 @@ const editStartHandle = async (id: string) => {
   editFormValue.value = data;
 }
 const deleteHandle = async (id: string) => {
-  const {code, data} = await delApi(id)
+  const {code} = await delApi(id)
   if (code !== 0) return
   await fetchData(pagination.value)
 }
@@ -303,5 +314,10 @@ export default {
 
 .table-toolbar {
   margin-bottom: 12px;
+}
+
+:deep(.arco-divider-horizontal) {
+  margin-top: 0;
+  margin-bottom: 16px;
 }
 </style>

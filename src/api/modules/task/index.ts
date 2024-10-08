@@ -1,31 +1,33 @@
 import {del, get, post, put} from "@/api/request";
 import type {ApiListResponse, ApiResponse} from "@/types/global";
 
-
-export type TaskItem = {
+export interface TaskRelated {
     "id": number,
+    "name": string,
+    "status": boolean,
+    "isTiming": boolean,
+    "founderUser": {
+        "uid": string,
+        "username": string
+    },
+    "createTime": string,
+    "updateTime": string,
+}
+
+export interface TaskItem extends TaskRelated {
     "nodes": {
         "id": number,
         "nodeUid": string,
         "name": string,
         "status": boolean
     }[],
-    "founderUser": {
-        "uid": string,
-        "username": string
-    },
     "spider": {
-        "id": 1,
+        "id": number,
         "spiderUid": string,
         "name": string,
         "status": boolean
     },
-    "createTime": string,
-    "updateTime": string,
     "taskUid": string,
-    "name": string,
-    "status": boolean,
-    "isTiming": boolean,
     "cronExpression": string
 }
 
