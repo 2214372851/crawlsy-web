@@ -10,7 +10,7 @@
         </a-button>
       </a-tooltip>
       <a-tooltip content="保存">
-        <a-button @click="saveChange">
+        <a-button :loading="saveLoading" @click="saveChange">
           <template #icon>
             <icon-save/>
           </template>
@@ -84,11 +84,11 @@ import {onMounted, onUnmounted, ref, watch} from "vue";
 import type {ApiResponse, IdeTabItem} from "@/types/global";
 import MonacoEditor from "@/components/monacoEditor/index.vue";
 import {Modal, type TreeNodeData} from "@arco-design/web-vue";
-import {debounce} from "@/utils/func";
 import useLoading from "@/hooks/loading";
 
 const {loading, setLoading} = useLoading()
-const {fileTreeOption, loadFileApi} = defineProps<{
+const {fileTreeOption, loadFileApi, saveLoading = false} = defineProps<{
+  saveLoading: boolean,
   fileTreeOption: TreeNodeData[],
   loadDir: (nodeData: TreeNodeData) => any,
   loadFileApi: (nodeData: string) => Promise<ApiResponse<string>>,
@@ -186,14 +186,12 @@ const getFileContent = async (seletcedKeys: string[], treeData: { node: TreeNode
   } finally {
     setLoading(false)
   }
-
 }
 const saveChange = () => {
-  saveChangeDebounce(tabKey.value, codeVals.value.filter(item => item.key === tabKey.value)[0].value)
+  if (!saveLoading) {
+    emit('save-change', tabKey.value, codeVals.value.filter(item => item.key === tabKey.value)[0].value)
+  }
 }
-const saveChangeDebounce = debounce((key: string, content: string) => {
-  emit('save-change', key, content)
-}, 1000)
 const delChange = async (key: string) => {
   Modal.open({
     title: '操作通知',

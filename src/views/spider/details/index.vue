@@ -14,11 +14,19 @@
           </template>
           重构
         </a-button>
+        <a-button @click="fetchData" :loading="loading">
+          刷新
+        </a-button>
         <a-button @click="closeTask" :loading="loading">
           终止
         </a-button>
       </a-space>
-      <a-input-search :loading="loading" placeholder="请输入任务名称" style="width: 200px"/>
+      <a-input-search
+          v-model="searchVal"
+          @search="searchTask"
+          :loading="loading"
+          placeholder="请输入任务名称"
+          style="width: 200px"/>
     </div>
     <a-table
         row-key="id"
@@ -64,7 +72,7 @@ import useLoading from "@/hooks/loading";
 const route = useRoute();
 const {loading, setLoading} = useLoading();
 const resourceId = route.query?.id as string
-const selectedKeys = ref(['Jane Doe', 'Alisa Ross']);
+const selectedKeys = ref([]);
 const rowSelection: TableRowSelection = {
   type: 'checkbox',
   showCheckedAll: true,
@@ -118,15 +126,22 @@ const renderData = ref<SpiderTaskItem>({
   taskmodel_set: [],
   updateTime: ""
 });
+const searchVal = ref('')
 const openIde = () => {
   router.push({path: '/webIde', query: {id: resourceId}})
 }
+let cacheData = []
+const searchTask = () => {
+  renderData.value.taskmodel_set = !searchVal.value ? cacheData : cacheData.filter(item => item.name.includes(searchVal.value))
+}
 const fetchData = async () => {
   setLoading(true);
+  searchVal.value = ''
   try {
     const res = await spiderTaskListApi(resourceId)
     if (!res.data) return
     renderData.value = res.data;
+    cacheData = res.data.taskmodel_set
   } catch (err) {
     console.error(err)
     // you can report use errorHandler or other

@@ -188,13 +188,13 @@ const columns = [
 const getSpiderOption = async () => {
   const {data, code} = await spiderOptionApi()
   if (code === 0) {
-    spiderOptions.value = data?.list as menuOptionData[]
+    spiderOptions.value = data as menuOptionData[]
   }
 }
 const getNodeOption = async () => {
   const {data, code} = await nodeOptionApi()
   if (code === 0) {
-    nodeOptions.value = data?.list as menuOptionData[]
+    nodeOptions.value = data as menuOptionData[]
   }
 }
 onMounted(async () => {

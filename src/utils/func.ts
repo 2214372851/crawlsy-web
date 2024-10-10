@@ -4,9 +4,9 @@
  * @param delay {Number} 执行间隔，单位是毫秒(ms)，默认100ms
  * @return {Function} 可被调用执行的函数
  */
-export const debounce = (fn: Function, delay: number = 500) => {
+export const debounce = (fn: Function, delay: number = 500): Function => {
     let timer: ReturnType<typeof setTimeout> | undefined;
-    return function (...args: any) {
+    return function (...args: any[]) {
         if (timer) clearTimeout(timer)
         timer = setTimeout(() => {
             fn(...args)

@@ -4,6 +4,7 @@
         :file-tree-option="fileTreeOption"
         :loadDir="loadMore"
         :load-file-api="resourceLoadApi"
+        :save-loading="loading"
         @save-change="saveResourceData"
         @rename-change="renameResource"
         @del-change="delResource"
@@ -28,8 +29,10 @@ import {
   resourceWriteApi
 } from "@/api/modules/ide";
 import {Message, type TreeNodeData} from '@arco-design/web-vue';
+import useLoading from "@/hooks/loading";
 
 
+const {loading, setLoading} = useLoading()
 const form = ref({
   name: '',
   path: '',
@@ -96,12 +99,17 @@ const getResourceListData = async () => {
   fileTreeOption.value = fileTree
 }
 const saveResourceData = async (key: string, content: string) => {
-  const {code} = await resourceWriteApi(key, content)
-  if (code !== 0) return
-  Message.success({
-    content: "保存成功",
-    duration: 5000
-  })
+  setLoading(true)
+  try {
+    const {code} = await resourceWriteApi(key, content)
+    if (code !== 0) return
+    Message.success({
+      content: "保存成功",
+      duration: 5000
+    })
+  } finally {
+    setLoading(false)
+  }
 }
 const updateTreeOption = (treeNode: TreeNodeData[], key: string, type: string, apiNode: TreeNodeData | undefined = undefined): TreeNodeData[] => {
   const newTreeNode = []

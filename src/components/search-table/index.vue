@@ -13,6 +13,12 @@
             </template>
             新建
           </a-button>
+          <a-button status="danger" @click="deleteBatchHandle">
+            <template #icon>
+              <icon-delete/>
+            </template>
+            删除
+          </a-button>
         </a-space>
       </a-grid-item>
       <a-grid-item suffix style="margin-left: auto">
@@ -220,16 +226,46 @@ const refreshData = async () => {
   await fetchData(pagination.value)
 }
 const editStartHandle = async (id: string) => {
-  const {code, data} = await infoApi(id)
-  if (code !== 0) return
-  editVisible.value = true;
-  editItemKey.value = id;
-  editFormValue.value = data;
+  setLoading(true)
+  try {
+    const {code, data} = await infoApi(id)
+    if (code !== 0) return
+    editVisible.value = true;
+    editItemKey.value = id;
+    editFormValue.value = data;
+  } finally {
+    setLoading(false)
+  }
 }
 const deleteHandle = async (id: string) => {
-  const {code} = await delApi(id)
-  if (code !== 0) return
-  await fetchData(pagination.value)
+  setLoading(true)
+  try {
+    const {code} = await delApi(id)
+    if (code !== 0) return
+    await fetchData(pagination.value)
+    Message.success({
+      content: "删除成功",
+      duration: 5000
+    })
+  } finally {
+    setLoading(false)
+  }
+}
+const deleteBatchHandle = async () => {
+  setLoading(true)
+  try {
+    for (const id of selectedKeys.value) {
+      const {code} = await delApi(id)
+      if (code !== 0) return
+    }
+    await fetchData(pagination.value)
+    Message.success({
+      content: "删除成功",
+      duration: 5000
+    })
+  } finally {
+    setLoading(false)
+  }
 }
 const editHandleCancel = () => {
   editVisible.value = false;
