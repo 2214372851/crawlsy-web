@@ -138,10 +138,10 @@ const fetchData = async () => {
   setLoading(true);
   searchVal.value = ''
   try {
-    const res = await spiderTaskListApi(resourceId)
-    if (!res.data) return
-    renderData.value = res.data;
-    cacheData = res.data.taskmodel_set
+    const {data} = await spiderTaskListApi(resourceId)
+    if (!data) return
+    renderData.value = data;
+    cacheData = data.taskmodel_set
   } catch (err) {
     console.error(err)
     // you can report use errorHandler or other

@@ -15,19 +15,10 @@ export interface TaskRelated {
 }
 
 export interface TaskItem extends TaskRelated {
-    "nodes": {
-        "id": number,
-        "nodeUid": string,
-        "name": string,
-        "status": boolean
-    }[],
-    "spider": {
-        "id": number,
-        "spiderUid": string,
-        "name": string,
-        "status": boolean
-    },
+    "taskNodes": number[],
     "taskUid": string,
+    "spiderName": string,
+    "taskSpider": number,
     "cronExpression": string
 }
 

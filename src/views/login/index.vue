@@ -69,7 +69,6 @@
 
 <script setup lang="ts">
 import {onMounted, reactive, ref} from "vue";
-import Cookies from 'js-cookie'
 import {decrypt, encrypt} from "@/utils/crypt";
 import type {LoginResponse} from "@/api/modules/login";
 import {loginApi} from "@/api/modules/login";
@@ -89,8 +88,8 @@ const initUserInfo = () => {
   if (userStore.accessToken) {
     router.push('/')
   }
-  const email = Cookies.get('email') || ''
-  const password = Cookies.get('password') || ''
+  const email = window.localStorage.getItem('email') || ''
+  const password = window.localStorage.getItem('password') || ''
   if (password && email) {
     form.password = decrypt(password)
     form.email = email
@@ -102,17 +101,14 @@ onMounted(() => {
 })
 const handleSubmit = async () => {
   if (form.isSave) {
-    Cookies.set('email', form.email, {
-      expires: 7
-    })
-    Cookies.set('password', encrypt(form.password), {
-      expires: 7
-    })
+    window.localStorage.setItem('email', form.email)
+    window.localStorage.setItem('password', encrypt(form.password))
   } else {
-    Cookies.remove('email')
-    Cookies.remove('password')
+    window.localStorage.removeItem('email')
+    window.localStorage.removeItem('password')
   }
-  const {code, data} = await loginApi(form)
+  const {email, password} = form
+  const {code, data} = await loginApi({email, password})
   if (code !== 0) return
   userStore.setUserInfo(data as LoginResponse)
   Message.success({
@@ -204,6 +200,7 @@ const handleSubmit = async () => {
 :deep(.arco-layout-sider) {
   background: linear-gradient(163.85deg, #1d2129, #00308f);
 }
+
 @media screen and (max-width: 630px) {
   .media-hide {
     display: none;
