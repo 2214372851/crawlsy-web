@@ -3,6 +3,8 @@
       name="任务"
       :search-options="searchOptions"
       :columns="columns"
+      :is-look="true"
+      :look-handle="lookHandle"
       :data-api="taskListApi"
       :edit-api="taskUpdateApi"
       :info-api="taskInfoApi"
@@ -94,7 +96,9 @@ import {onMounted, ref, type Ref, useTemplateRef} from "vue";
 import type {menuOptionData, SearchOption} from "@/types/global";
 import {spiderOptionApi} from "@/api/modules/spider";
 import {nodeOptionApi} from "@/api/modules/node";
+import {useRouter} from "vue-router";
 
+const router = useRouter()
 const editFormRef = useTemplateRef('editFormRef')
 const addFormRef = useTemplateRef('addFormRef')
 const spiderOptions = ref<menuOptionData[]>([])
@@ -196,6 +200,9 @@ const getNodeOption = async () => {
   if (code === 0) {
     nodeOptions.value = data as menuOptionData[]
   }
+}
+const lookHandle = (id: string) => {
+  router.push({path: '/task/details', query: {id: id}})
 }
 onMounted(async () => {
   await getSpiderOption()

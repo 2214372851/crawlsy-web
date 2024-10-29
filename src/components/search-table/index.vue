@@ -252,6 +252,14 @@ const deleteHandle = async (id: string) => {
   }
 }
 const deleteBatchHandle = async () => {
+  console.log(selectedKeys.value)
+  if (!selectedKeys.value.length) {
+    Message.warning({
+      content: "请选择要删除的数据",
+      duration: 5000
+    })
+    return
+  }
   setLoading(true)
   try {
     for (const id of selectedKeys.value) {
@@ -263,6 +271,7 @@ const deleteBatchHandle = async () => {
       content: "删除成功",
       duration: 5000
     })
+    selectedKeys.value = []
   } finally {
     setLoading(false)
   }
