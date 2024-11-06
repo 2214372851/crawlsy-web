@@ -112,6 +112,15 @@ const menus = [
     "icon": "iconLock",
     "path": "/role"
   },
+  {
+    "id": 11,
+    "createTime": "2024-07-07 14:08:03",
+    "updateTime": "2024-07-07 14:08:03",
+    "parent": 9,
+    "name": "菜单管理",
+    "icon": "iconLock",
+    "path": "/menu"
+  },
 ]
 
 

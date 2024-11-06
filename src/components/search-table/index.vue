@@ -23,12 +23,12 @@
       </a-grid-item>
       <a-grid-item suffix style="margin-left: auto">
         <a-space size="medium">
-          <a-button>
-            <template #icon>
-              <icon-download/>
-            </template>
-            下载
-          </a-button>
+<!--          <a-button>-->
+<!--            <template #icon>-->
+<!--              <icon-download/>-->
+<!--            </template>-->
+<!--            下载-->
+<!--          </a-button>-->
           <a-tooltip content="刷新">
             <icon-refresh class="cursor" @click="refreshData" size="18" :disabled="loading"/>
 

@@ -39,13 +39,10 @@
               placeholder="请选择爬虫..."/>
         </a-form-item>
         <a-form-item field="taskNodes" label="任务节点">
-          <a-select
-              v-model="formValue.data.taskNodes"
+          <multiple-select
               :options="nodeOptions"
-              :field-names="{label: 'name', value: 'id'}"
-              value-key="name"
-              multiple
-              placeholder="请选择节点..."/>
+              v-model="formValue as any"
+          />
         </a-form-item>
       </a-form>
     </template>
@@ -76,13 +73,10 @@
               placeholder="请选择爬虫..."/>
         </a-form-item>
         <a-form-item field="taskNodes" label="任务节点">
-          <a-select
-              v-model="formValue.data.taskNodes"
+          <multiple-select
               :options="nodeOptions"
-              :field-names="{label: 'name', value: 'id'}"
-              value-key="name"
-              multiple
-              placeholder="请选择节点..."/>
+              v-model="formValue as any"
+          />
         </a-form-item>
       </a-form>
     </template>
@@ -97,6 +91,7 @@ import type {menuOptionData, SearchOption} from "@/types/global";
 import {spiderOptionApi} from "@/api/modules/spider";
 import {nodeOptionApi} from "@/api/modules/node";
 import {useRouter} from "vue-router";
+import MultipleSelect from "@/views/task/components/multipleSelect.vue";
 
 const router = useRouter()
 const editFormRef = useTemplateRef('editFormRef')
@@ -192,13 +187,13 @@ const columns = [
 const getSpiderOption = async () => {
   const {data, code} = await spiderOptionApi()
   if (code === 0) {
-    spiderOptions.value = data as menuOptionData[]
+    spiderOptions.value = data.list as menuOptionData[]
   }
 }
 const getNodeOption = async () => {
   const {data, code} = await nodeOptionApi()
   if (code === 0) {
-    nodeOptions.value = data as menuOptionData[]
+    nodeOptions.value = data.list as menuOptionData[]
   }
 }
 const lookHandle = (id: string) => {

@@ -21,7 +21,7 @@ export type RoleAddEditData = {
     permissions: string[]
 }
 
-export const roleOptionApi = () => get<ApiResponse<ApiListResponse<menuOptionData>>>('/roleOption/')
+export const roleOptionApi = () => get<ApiResponse<ApiListResponse<menuOptionData>>>('/role-option/')
 
 export const roleListApi = (params: queryRoleData) => get<ApiResponse<ApiListResponse<RoleItem>>>('/role/', params)
 

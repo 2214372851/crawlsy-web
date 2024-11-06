@@ -22,6 +22,14 @@ export interface TaskItem extends TaskRelated {
     "cronExpression": string
 }
 
+export interface TaskDetailItem extends TaskRelated {
+    "taskNodes": { id: number, name: string, nodeUid: string, status: boolean }[]
+    "taskUid": string,
+    "spiderName": string,
+    "taskSpider": number,
+    "cronExpression": string
+}
+
 export type queryTaskData = {
     page?: number,
     pageSize?: number,
@@ -41,7 +49,7 @@ export type TaskAddEditData = {
 }
 export const taskListApi = (params: queryTaskData) => get<ApiResponse<ApiListResponse<TaskItem>>>('/task/', params)
 
-export const taskInfoApi = (id: string) => get<ApiResponse<TaskItem>>(`/task/${id}/`)
+export const taskInfoApi = (id: string) => get<ApiResponse<TaskDetailItem>>(`/task/${id}/`)
 
 export const taskAddApi = (data: TaskAddEditData) => post<ApiResponse<unknown>>('/task/', data)
 

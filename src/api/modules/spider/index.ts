@@ -10,7 +10,6 @@ export interface SpiderItem {
     updateTime: string,
     name: string,
     spiderUid: string,
-    resources: string,
     status: string
 }
 
@@ -33,7 +32,7 @@ export type SpiderAddEditData = {
     status: boolean
 }
 
-export const spiderOptionApi = () => get<ApiResponse<ApiListResponse<menuOptionData>>>('/spiderOption/')
+export const spiderOptionApi = () => get<ApiResponse<ApiListResponse<menuOptionData>>>('/spider-option/')
 
 export const spiderListApi = (params: querySpiderData) => get<ApiResponse<ApiListResponse<SpiderItem>>>('/spider/', params)
 
@@ -45,4 +44,4 @@ export const spiderUpdateApi = (id: string, data: SpiderAddEditData) => put<ApiR
 
 export const spiderDelApi = (id: string) => del<ApiResponse<unknown>>(`/spider/${id}/`)
 
-export const spiderTaskListApi = (id: string) => get<ApiResponse<SpiderTaskItem>>(`/spiderTask/${id}/`)
+export const spiderTaskListApi = (id: string) => get<ApiResponse<SpiderTaskItem>>(`/spider-task/${id}/`)

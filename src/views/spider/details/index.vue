@@ -1,5 +1,36 @@
 <template>
   <a-card>
+    <a-skeleton animation>
+      <a-skeleton-line :rows="5" v-if="loading"/>
+      <a-descriptions
+          v-else
+          :column="3"
+          :title="renderData.name"
+          layout="inline-vertical"
+          :label-style="{
+            'margin-top': '16px'
+          }">
+        <a-descriptions-item label="创建用户">
+          {{ renderData.founderUser.username }}
+        </a-descriptions-item>
+        <a-descriptions-item label="状态">
+          <a-tag :color="renderData.status ? 'green' : 'red'">
+            {{ renderData.status ? '可用' : '不可用' }}
+          </a-tag>
+        </a-descriptions-item>
+        <a-descriptions-item label="状态">
+          <a-tag :color="renderData.status ? 'green' : 'red'">
+            {{ renderData.status ? '是' : '否' }}
+          </a-tag>
+        </a-descriptions-item>
+        <a-descriptions-item label="创建时间">
+          <a-tag color="arcoblue">{{ renderData.createTime }}</a-tag>
+        </a-descriptions-item>
+        <a-descriptions-item label="更新时间">
+          <a-tag color="arcoblue">{{ renderData.updateTime }}</a-tag>
+        </a-descriptions-item>
+      </a-descriptions>
+    </a-skeleton>
     <div class="action-btn">
       <a-space>
         <a-button type="primary" @click="openIde">
@@ -120,11 +151,10 @@ const renderData = ref<SpiderTaskItem>({
   founderUser: {uid: "", username: ""},
   id: 0,
   name: "",
-  resources: "",
   spiderUid: "",
   status: "",
-  taskmodel_set: [],
-  updateTime: ""
+  updateTime: "",
+  taskmodel_set: []
 });
 const searchVal = ref('')
 const openIde = () => {
@@ -156,7 +186,7 @@ const closeTask = () => {
   Message.success(`任务已关闭 ${JSON.stringify(selectedKeys.value)}`)
 }
 const lookTask = (id: string) => {
-  Message.success(`任务 ${id}`)
+  router.push({path: '/task/details', query: {id}})
 }
 onMounted(async () => {
   await fetchData()
@@ -165,7 +195,7 @@ onMounted(async () => {
 
 <style scoped lang="less">
 .action-btn {
-  margin-bottom: 12px;
+  margin: 16px 0;
   display: flex;
   justify-content: space-between;
 }

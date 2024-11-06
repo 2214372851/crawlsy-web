@@ -1,15 +1,27 @@
 <template>
-  <a-card id="show" :bordered="true" :style="{ width: '100%' }" title="角色管理">
+  <a-card
+      :bordered="true"
+      :style="{ width: '100%' }">
+    <div class="arco-card-header-title">
+      角色管理
+    </div>
+    <a-divider/>
     <div class="toolbar">
-      <a-button type="primary" @click="addStartHandle">添加</a-button>
+      <a-button type="primary" @click="addStartHandle">
+        <template #icon>
+          <icon-plus/>
+        </template>
+        新建
+      </a-button>
       <a-input-search
           style="width: 240px;"
           placeholder="请输入角色名称..."
           v-model="formValue.name"
           :loading="loading"
-          @search="fetchData"/>
+          @search="fetchData"
+          @clear="reset"
+          allow-clear/>
     </div>
-
     <a-space direction="vertical" style="width: 100%;">
       <a-spin style="width: 100%" :loading="loading">
         <a-empty v-if="renderData.length == 0"/>
@@ -283,6 +295,12 @@ const getPermissionOption = async () => {
       label: item.name
     }))
   }
+}
+const reset = async () => {
+  formValue.value = {
+    name: ''
+  }
+  await fetchData(pagination.value)
 }
 const fetchData = async (params: any = basePagination) => {
   setLoading(true);

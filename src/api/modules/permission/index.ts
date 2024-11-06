@@ -24,7 +24,7 @@ export type PermissionAddEditData = {
     menu: number
 }
 
-export const permissionOptionApi = () => get<ApiResponse<ApiListResponse<menuOptionData>>>('/permissionOption/')
+export const permissionOptionApi = () => get<ApiResponse<ApiListResponse<menuOptionData>>>('/permission-option/')
 
 export const permissionListApi = (params: queryPermissionData) => get<ApiResponse<ApiListResponse<PermissionItem>>>('/permission/', params)
 

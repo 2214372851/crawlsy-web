@@ -94,11 +94,6 @@ const columns = [
     slotName: 'user',
   },
   {
-    title: '爬虫标识',
-    dataIndex: 'spiderUid',
-    width: 320
-  },
-  {
     title: '状态',
     slotName: 'status',
   },
