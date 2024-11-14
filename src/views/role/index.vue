@@ -306,11 +306,11 @@ const fetchData = async (params: any = basePagination) => {
   setLoading(true);
   try {
     const {current, pageSize} = params
-    const res = await roleListApi({...formValue.value, page: current, pageSize})
-    if (!res.data) return
-    renderData.value = res.data.list;
+    const {code, data} = await roleListApi({...formValue.value, page: current, pageSize})
+    if (code !== 0) return
+    renderData.value = data.list;
     pagination.value.current = params.current;
-    pagination.value.total = res.data?.total;
+    pagination.value.total = data?.total;
   } catch (err) {
     console.error(err)
     // you can report use errorHandler or other

@@ -1,34 +1,44 @@
 <template>
-    <a-card title="日志查看器">
-        <div style="height: 100%;width: 100%;overflow:auto;background: #282C34">
-<!--        <CodeMirror-->
-<!--                class="code-cursor"-->
-<!--                v-model="logVal"-->
-<!--                style="height: 300px;overflow-y: auto"-->
-<!--                :extensions="extensions"/>-->
-        </div>
-    </a-card>
+  <MonacoEditor
+      theme="vs-dark"
+      v-model="logs"
+      :options="options"/>
 </template>
 
 <script setup lang="ts">
+import MonacoEditor from "@/components/monacoEditor/index.vue";
+import {onMounted, onUnmounted, ref} from "vue";
+import type {Options} from "@/components/monacoEditor/index";
+import WebSocketService from "@/utils/socket";
 
+const options = ref<Options>({
+  automaticLayout: false,
+  foldingStrategy: 'indentation',
+  fontSize: 14,
+  minimap: {enabled: false},
+  overviewRulerBorder: false,
+  readOnly: false,
+  renderLineHighlight: 'none',
+  scrollBeyondLastLine: false,
+  selectOnLineNumbers: false
+})
 
-// const show= shallowRef()
-// onMounted(()=>{
-//     console.log(show.value)
-// })
-
+const logs = defineModel<string>()
+const emit = defineEmits<(e: 'close') => void>()
+onUnmounted(() => {
+  emit('close')
+})
 </script>
 
 <script lang="ts">
 export default {
-    name: "Logger"
+  name: "Logger"
 }
 </script>
 
 <style scoped lang="less">
 .code-cursor {
-    cursor: text;
-    height: 100%;
+  cursor: text;
+  height: 100%;
 }
 </style>

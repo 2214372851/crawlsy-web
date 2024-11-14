@@ -35,13 +35,12 @@
       </a-descriptions>
     </a-spin>
     <a-divider :margin="40" orientation="left">节点任务状态</a-divider>
-
-    <a-grid v-if="renderData.monitor.length > 0" :cols="{ xs: 1, sm: 1, md: 2, lg: 3, xl: 3, xxl: 4 }" :colGap="16"
+    <a-grid v-if="renderData.monitor[renderData.monitor.length - 1]?.tasks.length > 0" :cols="{ xs: 1, sm: 1, md: 2, lg: 3, xl: 3, xxl: 4 }" :colGap="16"
             :rowGap="16">
-      <a-grid-item v-for="item in renderData.monitor[renderData.monitor.length - 1]?.tasks" :key="item.task_id">
+      <a-grid-item v-for="item in renderData.monitor[renderData.monitor.length - 1]?.tasks" :key="item.taskUid">
         <div class="status-card">
           <span class="title">
-            {{ item.task_id }}
+            {{ item.taskUid }}
           </span>
           <span class="status"></span>
         </div>
@@ -95,14 +94,14 @@ use([
   PieChart,
   CanvasRenderer,
 ])
-const ramData = ref([])
-const load1mData = ref([])
-const load5mData = ref([])
-const load15mData = ref([])
-const cpuData = ref([])
-const recvData = ref([])
-const sentData = ref([])
-const tooltipFormat = (params) => {
+const ramData = ref<[string, number][]>([])
+const load1mData = ref<[string, number][]>([])
+const load5mData = ref<[string, number][]>([])
+const load15mData = ref<[string, number][]>([])
+const cpuData = ref<[string, number][]>([])
+const recvData = ref<[string, number][]>([])
+const sentData = ref<[string, number][]>([])
+const tooltipFormat = (params: any) => {
   let relVal = params[0].name;
   for (let i = 0; i < params.length; i++) {
     relVal += params[i].marker + params[i].seriesName + ' : ' + params[i].value[1] + '<br/>'
@@ -229,7 +228,7 @@ const optionRam = useChartOption((isDark) => {
       formatter: tooltipFormat
     },
     grid: {
-      left: '2%',
+      left: '3%',
       right: '6%',
       bottom: '4%',
       containLabel: true
@@ -357,7 +356,7 @@ const optionBand = useChartOption((isDark) => {
           }
         },
         axisLabel: {
-          formatter: function (value) {
+          formatter: function (value: number) {
             return value + ' MB';  // 在这里设置单位，例如 '单位'
           }
         }
@@ -460,7 +459,7 @@ const optionLoad = useChartOption((isDark) => {
       formatter: tooltipFormat
     },
     grid: {
-      left: '2%',
+      left: '3%',
       right: '6%',
       bottom: '4%',
       containLabel: true
@@ -614,20 +613,19 @@ const renderData = ref<NodeDetailData>({
 const fetchData = async () => {
   setLoading(true);
   try {
-    const {data} = await nodeInfoApi(resourceId)
-    if (!data) return
+    const {code, data} = await nodeInfoApi(resourceId)
+    if (code !== 0) return
     renderData.value = data;
-    const ram = []
-    const cpu = []
-    const recv = []
-    const sent = []
-    const load1m = []
-    const load5m = []
-    const load15m = []
+    const ram: [string, number][] = []
+    const cpu: [string, number][] = []
+    const recv: [string, number][] = []
+    const sent: [string, number][] = []
+    const load1m: [string, number][] = []
+    const load5m: [string, number][] = []
+    const load15m: [string, number][] = []
     for (let i = 0; i < data.monitor.length; i++) {
       const item = data.monitor[i]
       const time = timestampToTime(item.time)
-      console.log(time)
       ram.push([time, item.memory_usage])
       cpu.push([time, item.cpu_usage])
       recv.push([time, item.recv])

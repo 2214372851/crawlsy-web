@@ -22,7 +22,7 @@ http.interceptors.request.use(
     },
     (error) => {
         Message.error({
-            content: "请求发生错误",
+            content: "请求失败，请稍后重试",
             duration: 5000
         })
         console.error("Request error:", error);

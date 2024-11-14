@@ -20,3 +20,5 @@ export const Status = {
         color: 'red'
     }
 }
+
+export type StatusType = keyof typeof Status

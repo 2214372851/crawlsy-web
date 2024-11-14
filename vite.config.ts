@@ -5,6 +5,7 @@ import vue from '@vitejs/plugin-vue'
 import vueDevTools from 'vite-plugin-vue-devtools'
 import {vitePluginForArco} from "@arco-plugins/vite-vue";
 import {visualizer} from "rollup-plugin-visualizer";
+import MonacoEditorPlugin from 'vite-plugin-monaco-editor';
 
 // https://vitejs.dev/config/
 export default defineConfig({
@@ -19,7 +20,7 @@ export default defineConfig({
             filename: 'dist/report.html', // 生成报告的文件位置
             gzipSize: true, // 显示 gzip 后的文件大小
             brotliSize: true, // 显示 brotli 压缩后的文件大小
-        })
+        }),
     ],
     optimizeDeps: {
         include: [

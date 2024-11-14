@@ -99,6 +99,7 @@ import {Message, type TableColumnData, type TableRowSelection} from "@arco-desig
 import router from "@/router";
 import {type SpiderTaskItem, spiderTaskListApi} from "@/api/modules/spider";
 import useLoading from "@/hooks/loading";
+import type {TaskRelated} from "@/api/modules/task";
 
 const route = useRoute();
 const {loading, setLoading} = useLoading();
@@ -160,7 +161,7 @@ const searchVal = ref('')
 const openIde = () => {
   router.push({path: '/webIde', query: {id: resourceId}})
 }
-let cacheData = []
+let cacheData: TaskRelated[] = []
 const searchTask = () => {
   renderData.value.taskmodel_set = !searchVal.value ? cacheData : cacheData.filter(item => item.name.includes(searchVal.value))
 }
@@ -168,8 +169,8 @@ const fetchData = async () => {
   setLoading(true);
   searchVal.value = ''
   try {
-    const {data} = await spiderTaskListApi(resourceId)
-    if (!data) return
+    const {code, data} = await spiderTaskListApi(resourceId)
+    if (code !== 0) return
     renderData.value = data;
     cacheData = data.taskmodel_set
   } catch (err) {

@@ -63,7 +63,7 @@
               </template>
               <div style="height: 100%;width: 100%;overflow:auto;">
                 <MonacoEditor
-                    :key="theme"
+                    :key="item.key"
                     :theme="theme"
                     v-model="item.value"
                     @save-change="saveChange"

@@ -38,7 +38,7 @@
             size="large"
             type="circle"
             :percent="item.nodeLoad"
-            :status="status(item)"
+            status="normal"
             show-text/>
       </div>
     </template>
@@ -62,15 +62,6 @@ const emit = defineEmits<{
   (e: 'look', id: string): void,
   (e: 'delete', id: string): void,
 }>()
-const status = (item: NodeItem) => {
-  if (item.nodeLoad > 0.8) {
-    return 'danger'
-  } else if (item.nodeLoad > 0.6) {
-    return 'warning'
-  } else {
-    return 'normal'
-  }
-}
 </script>
 
 <style scoped lang="less">

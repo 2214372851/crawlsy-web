@@ -23,7 +23,7 @@ export interface TaskItem extends TaskRelated {
 }
 
 export interface TaskDetailItem extends TaskRelated {
-    "taskNodes": { id: number, name: string, nodeUid: string, status: boolean }[]
+    "taskNodes": { id: number, name: string, nodeUid: string, status: number }[]
     "taskUid": string,
     "spiderName": string,
     "taskSpider": number,

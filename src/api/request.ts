@@ -1,33 +1,54 @@
 import http from "@/api/http";
 
-export const get = <T>(url: string, params: Record<string, any> = {}): Promise<T> => {
+export const get = <T>(
+    url: string,
+    params: Record<string, any> = {},
+    timeout = 5000
+): Promise<T> => {
     return http({
         method: 'get',
+        timeout,
         url,
         params
     })
 }
 
-export const post = <T>(url: string, data: Record<string, any> = {}): Promise<T> => {
+export const post = <T>(
+    url: string,
+    data: Record<string, any> = {},
+    timeout = 5000
+): Promise<T> => {
     return http({
         method: 'post',
+        timeout,
         url,
         data
     })
 }
 
-export const put = <T>(url: string, data: Record<string, any> = {}, params: Record<string, any> = {}): Promise<T> => {
+export const put = <T>(
+    url: string,
+    data: Record<string, any> = {},
+    params: Record<string, any> = {},
+    timeout = 5000
+): Promise<T> => {
     return http({
         method: 'put',
+        timeout,
         url,
         data,
         params
     })
 }
 
-export const del = <T>(url: string, params: Record<string, any> = {}): Promise<T> => {
+export const del = <T>(
+    url: string,
+    params: Record<string, any> = {},
+    timeout = 5000
+): Promise<T> => {
     return http({
         method: 'delete',
+        timeout,
         url,
         params
     })

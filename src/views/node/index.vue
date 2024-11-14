@@ -6,7 +6,7 @@
     <a-space direction="vertical" size="medium" style="width: 100%">
       <a-grid :cols="{ xs: 1, sm: 4, md: 4, lg: 4, xl: 4, xxl: 4 }" :colGap="16" :rowGap="16" style="">
         <a-grid-item :span="2">
-          <a-tabs type="rounded" @change="handleTabChange" style="height: 32px;width: 100%">
+          <a-tabs type="rounded" @change="handleTabChange" v-model:active-key="tabKey" style="height: 32px;width: 100%">
             <a-tab-pane key="all" title="全部"/>
             <a-tab-pane key="run" title="运行中"/>
             <a-tab-pane key="stop" title="不可用"/>
@@ -111,7 +111,7 @@ import {onMounted, type Ref, ref, useTemplateRef} from "vue";
 import useLoading from "@/hooks/loading";
 import {
   nodeAddApi,
-  nodeDelApi,
+  nodeDelApi, type NodeDetailData,
   nodeInfoApi,
   type NodeItem,
   nodeListApi,
@@ -159,6 +159,7 @@ const isList = ref(true);
 const editItemKey = ref<string>('');
 const addNodeVisible = ref(false)
 const editNodeVisible = ref(false)
+const tabKey = ref('all')
 const addFormValue = ref({
   name: '',
   nodeUid: ''
@@ -227,7 +228,7 @@ const editHandleBeforeOk = async () => {
       for (const key in data) {
         fieldsValid[key] = {
           status: 'error',
-          message: data[key][0]
+          message: (data as any)[key][0]
         }
       }
       editFormRef.value.setFields(fieldsValid)
@@ -262,7 +263,7 @@ const addStartHandle = async () => {
 const editStartHandle = async (id: string) => {
   const {code, data} = await nodeInfoApi(id)
   if (code !== 0) return
-  editFormValue.value.name = data.name
+  editFormValue.value.name = (data as NodeDetailData).name
   editItemKey.value = id
   editNodeVisible.value = true
 
@@ -290,17 +291,18 @@ const handleTabChange = async (key: string | number) => {
 const refreshData = async () => {
   setLoading(true)
   formValue.value = {}
+  tabKey.value = 'all'
   await fetchData(pagination.value)
 }
 const fetchData = async (params: any = basePagination) => {
   setLoading(true);
   try {
     const {current, pageSize} = params
-    const res = await nodeListApi({...formValue.value, page: current, pageSize})
-    if (!res.data) return
-    renderData.value = res.data.list;
+    const {code, data} = await nodeListApi({...formValue.value, page: current, pageSize})
+    if (code !== 0) return
+    renderData.value = data.list;
     pagination.value.current = params.current;
-    pagination.value.total = res.data?.total;
+    pagination.value.total = data?.total;
   } catch (err) {
     console.error(err)
   } finally {

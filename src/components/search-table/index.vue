@@ -31,7 +31,6 @@
 <!--          </a-button>-->
           <a-tooltip content="刷新">
             <icon-refresh class="cursor" @click="refreshData" size="18" :disabled="loading"/>
-
           </a-tooltip>
           <a-dropdown @select="handleSelectDensity">
             <a-tooltip content="密度">
@@ -208,11 +207,11 @@ const fetchData = async (params: any = basePagination) => {
   setLoading(true);
   try {
     const {current, pageSize} = params
-    const res = await dataApi({...formValue.value, page: current, pageSize})
-    if (!res.data) return
-    renderData.value = res.data.list;
+    const {code, data} = await dataApi({...formValue.value, page: current, pageSize})
+    if (code !== 0) return
+    renderData.value = data.list;
     pagination.value.current = params.current;
-    pagination.value.total = res.data?.total;
+    pagination.value.total = data?.total;
   } catch (err) {
     console.error(err)
     // you can report use errorHandler or other

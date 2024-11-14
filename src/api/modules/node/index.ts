@@ -38,7 +38,7 @@ export interface NodeStatus {
     "score": number,
     "cpu_count": number,
     "tasks": {
-        "task_id": string,
+        "taskUid": string,
         "status": number
     }[]
 }

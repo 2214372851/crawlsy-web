@@ -4,166 +4,37 @@
 <script lang="ts">
 import {defineComponent, onBeforeUnmount, onMounted, ref, watch} from 'vue'
 import {editorProps} from './index'
-import * as monaco from 'monaco-editor'
+import * as monaco from 'monaco-editor/esm/vs/editor/editor.api';
+import "monaco-editor/esm/vs/basic-languages/typescript/typescript.contribution";
+import "monaco-editor/esm/vs/basic-languages/javascript/javascript.contribution";
+import "monaco-editor/esm/vs/basic-languages/python/python.contribution";
+import 'monaco-editor/esm/vs/editor/contrib/contextmenu/browser/contextmenu.js';
+import 'monaco-editor/esm/vs/editor/contrib/folding/browser/folding.js';
+import 'monaco-editor/esm/vs/editor/contrib/suggest/browser/suggestController.js';
+import 'monaco-editor/esm/vs/editor/contrib/find/browser/findController.js';
+
 
 const pythonKeywords = [
-  // This section is the result of running
-  // `import keyword; for k in sorted(keyword.kwlist + keyword.softkwlist): print("  '" + k + "',")`
-  // in a Python REPL,
-  // though note that the output from Python 3 is not a strict superset of the
-  // output from Python 2.
-  "False",
-  // promoted to keyword.kwlist in Python 3
-  "None",
-  // promoted to keyword.kwlist in Python 3
-  "True",
-  // promoted to keyword.kwlist in Python 3
-  "_",
-  // new in Python 3.10
-  "and",
-  "as",
-  "assert",
-  "async",
-  // new in Python 3
-  "await",
-  // new in Python 3
-  "break",
-  "case",
-  // new in Python 3.10
-  "class",
-  "continue",
-  "def",
-  "del",
-  "elif",
-  "else",
-  "except",
-  "exec",
-  // Python 2, but not 3.
-  "finally",
-  "for",
-  "from",
-  "global",
-  "if",
-  "import",
-  "in",
-  "is",
-  "lambda",
-  "match",
-  // new in Python 3.10
-  "nonlocal",
-  // new in Python 3
-  "not",
-  "or",
-  "pass",
-  "print",
-  // Python 2, but not 3.
-  "raise",
-  "return",
-  "try",
-  "type",
-  // new in Python 3.12
-  "while",
-  "with",
-  "yield",
-  "int",
-  "float",
-  "long",
-  "complex",
-  "hex",
-  "abs",
-  "all",
-  "any",
-  "apply",
-  "basestring",
-  "bin",
-  "bool",
-  "buffer",
-  "bytearray",
-  "callable",
-  "chr",
-  "classmethod",
-  "cmp",
-  "coerce",
-  "compile",
-  "complex",
-  "delattr",
-  "dict",
-  "dir",
-  "divmod",
-  "enumerate",
-  "eval",
-  "execfile",
-  "file",
-  "filter",
-  "format",
-  "frozenset",
-  "getattr",
-  "globals",
-  "hasattr",
-  "hash",
-  "help",
-  "id",
-  "input",
-  "intern",
-  "isinstance",
-  "issubclass",
-  "iter",
-  "len",
-  "locals",
-  "list",
-  "map",
-  "max",
-  "memoryview",
-  "min",
-  "next",
-  "object",
-  "oct",
-  "open",
-  "ord",
-  "pow",
-  "print",
-  "property",
-  "reversed",
-  "range",
-  "raw_input",
-  "reduce",
-  "reload",
-  "repr",
-  "reversed",
-  "round",
-  "self",
-  "set",
-  "setattr",
-  "slice",
-  "sorted",
-  "staticmethod",
-  "str",
-  "sum",
-  "super",
-  "tuple",
-  "type",
-  "unichr",
-  "unicode",
-  "vars",
-  "xrange",
-  "zip",
-  "__dict__",
-  "__methods__",
-  "__members__",
-  "__class__",
-  "__bases__",
-  "__name__",
-  "__mro__",
-  "__subclasses__",
-  "__init__",
-  "__import__"
+  "False", "None", "True", "_", "and", "as", "assert", "async", "await", "break", "case",
+  "class", "continue", "def", "del", "elif", "else", "except", "exec", "finally", "for", "from",
+  "global", "if", "import", "in", "is", "lambda", "match", "nonlocal", "not", "or", "pass", "print",
+  "raise", "return", "try", "while", "with", "yield", "int", "float", "complex", "abs", "all", "any",
+  "bin", "bool", "callable", "chr", "classmethod", "delattr", "dict", "dir", "eval", "execfile", "filter",
+  "format", "frozenset", "getattr", "globals", "hasattr", "hash", "input", "isinstance", "iter", "len",
+  "list", "map", "max", "memoryview", "min", "next", "object", "open", "ord", "pow", "property", "range",
+  "reduce", "reload", "repr", "round", "self", "set", "setattr", "slice", "sorted", "staticmethod", "str",
+  "sum", "super", "tuple", "type", "vars", "zip"
 ]
 
 let code = "";
+
+// 注册Python的自动补全
 monaco.languages.registerCompletionItemProvider('python', {
   // @ts-ignore
   provideCompletionItems: function () {
     let suggestions = [];
+
+    // Python 关键词补全
     pythonKeywords.forEach(item => {
       suggestions.push({
         label: item,
@@ -171,11 +42,12 @@ monaco.languages.registerCompletionItemProvider('python', {
         insertText: item
       });
     })
-    const regex = /\b(?:def|class)\s+([a-zA-Z_][a-zA-Z0-9_]*)|([a-zA-Z_][a-zA-Z0-9_]*)(?=\s*=)/g;
+
+    const regex = /(?:^|\s)(def|class)\s+([a-zA-Z_][a-zA-Z0-9_]*)|([a-zA-Z_][a-zA-Z0-9_]*)(?=\s*=)/g;
     let match;
 
     while ((match = regex.exec(code)) !== null) {
-      const name = match[1] || match[2];
+      const name = match[2] || match[3];
       if (name) {
         suggestions.push({
           label: name,
@@ -184,12 +56,37 @@ monaco.languages.registerCompletionItemProvider('python', {
         });
       }
     }
-    return {
-      // 最后要返回一个数组
-      suggestions: suggestions
-    };
+
+    return {suggestions};
   },
 });
+
+async function getMonacoWorker(label: string) {
+  try {
+    if (label === 'json') {
+      const {default: jsonWorker} = await import('monaco-editor/esm/vs/language/json/json.worker?worker');
+      return new jsonWorker();
+    }
+    if (['css', 'scss', 'less'].includes(label)) {
+      const {default: cssWorker} = await import('monaco-editor/esm/vs/language/css/css.worker?worker');
+      return new cssWorker();
+    }
+    if (['html', 'handlebars', 'razor'].includes(label)) {
+      const {default: htmlWorker} = await import('monaco-editor/esm/vs/language/html/html.worker?worker');
+      return new htmlWorker();
+    }
+    if (['typescript', 'javascript'].includes(label)) {
+      const {default: tsWorker} = await import('monaco-editor/esm/vs/language/typescript/ts.worker?worker');
+      return new tsWorker();
+    }
+
+    const {default: EditorWorker} = await import('monaco-editor/esm/vs/editor/editor.worker?worker');
+    return new EditorWorker();
+  } catch (error) {
+    console.error("加载 Monaco Worker 时发生错误:", error);
+    throw error;
+  }
+}
 
 export default defineComponent({
   name: 'monacoEditor',
@@ -198,61 +95,43 @@ export default defineComponent({
   setup(props, {emit}) {
     self.MonacoEnvironment = {
       async getWorker(_: string, label: string) {
-        if (label === 'json') {
-          const {default: jsonWorker} = await import('monaco-editor/esm/vs/language/json/json.worker?worker');
-          return new jsonWorker();
-        }
-        if (['css', 'scss', 'less'].includes(label)) {
-          const {default: cssWorker} = await import('monaco-editor/esm/vs/language/css/css.worker?worker');
-          return new cssWorker();
-        }
-        if (['html', 'handlebars', 'razor'].includes(label)) {
-          const {default: htmlWorker} = await import('monaco-editor/esm/vs/language/html/html.worker?worker');
-          return new htmlWorker();
-        }
-        if (['typescript', 'javascript'].includes(label)) {
-          const {default: tsWorker} = await import('monaco-editor/esm/vs/language/typescript/ts.worker?worker');
-          return new tsWorker();
-        }
-
-
-        const {default: EditorWorker} = await import('monaco-editor/esm/vs/editor/editor.worker?worker');
-        return new EditorWorker();
+        return getMonacoWorker(label);
       },
     }
+
     let editor: monaco.editor.IStandaloneCodeEditor
     const codeEditBox = ref()
-    const init = () => {
-      monaco.languages.typescript.javascriptDefaults.setDiagnosticsOptions({
-        noSemanticValidation: true,
-        noSyntaxValidation: false,
-      })
-      monaco.languages.typescript.javascriptDefaults.setCompilerOptions({
-        target: monaco.languages.typescript.ScriptTarget.ES2020,
-        allowNonTsExtensions: true,
-      })
-      editor = monaco.editor.create(codeEditBox.value, {
-        value: props.modelValue,
-        language: props.language,
-        theme: props.theme,
-        ...props.options,
-      })
-      editor.addCommand(
-          monaco.KeyMod.chord(monaco.KeyMod.CtrlCmd | monaco.KeyCode.KeyS, 0),
-          function () {
-            const value = editor.getValue()
-            emit('save-change', value)
-          }
-      );
-      editor.onDidChangeModelContent(() => {
-        const value = editor.getValue()
-        code = value
-        emit('update:modelValue', value)
-        emit('change', value)
-      })
 
-      emit('editor-mounted', editor)
+    const init = () => {
+      try {
+        editor = monaco.editor.create(codeEditBox.value, {
+          value: props.modelValue,
+          language: props.language,
+          theme: props.theme,
+          ...props.options,
+        })
+
+        editor.addCommand(
+            monaco.KeyMod.chord(monaco.KeyMod.CtrlCmd | monaco.KeyCode.KeyS, 0),
+            function () {
+              const value = editor.getValue()
+              emit('save-change', value)
+            }
+        );
+
+        editor.onDidChangeModelContent(() => {
+          const value = editor.getValue()
+          code = value
+          emit('update:modelValue', value)
+          emit('change', value)
+        })
+
+        emit('editor-mounted', editor)
+      } catch (error) {
+        console.error("初始化 Monaco 编辑器时发生错误:", error);
+      }
     }
+
     watch(
         () => props.modelValue,
         newValue => {
@@ -264,6 +143,7 @@ export default defineComponent({
           }
         }
     )
+
     watch(
         () => props.options,
         newValue => {
@@ -271,22 +151,27 @@ export default defineComponent({
         },
         {deep: true}
     )
+
     watch(
         () => props.language,
         newValue => {
           monaco.editor.setModelLanguage(editor.getModel()!, newValue)
         }
     )
+
     onBeforeUnmount(() => {
       editor.dispose()
     })
+
     onMounted(() => {
       init()
     })
+
     return {codeEditBox}
   },
 })
 </script>
+
 <style lang="less" scoped>
 .codeEditBox {
   width: v-bind(width);

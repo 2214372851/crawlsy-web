@@ -78,6 +78,7 @@
               v-model="formValue as any"
           />
         </a-form-item>
+
       </a-form>
     </template>
   </SearchTable>
@@ -92,6 +93,7 @@ import {spiderOptionApi} from "@/api/modules/spider";
 import {nodeOptionApi} from "@/api/modules/node";
 import {useRouter} from "vue-router";
 import MultipleSelect from "@/views/task/components/multipleSelect.vue";
+
 
 const router = useRouter()
 const editFormRef = useTemplateRef('editFormRef')
@@ -187,13 +189,13 @@ const columns = [
 const getSpiderOption = async () => {
   const {data, code} = await spiderOptionApi()
   if (code === 0) {
-    spiderOptions.value = data.list as menuOptionData[]
+    spiderOptions.value = data?.list as menuOptionData[]
   }
 }
 const getNodeOption = async () => {
   const {data, code} = await nodeOptionApi()
   if (code === 0) {
-    nodeOptions.value = data.list as menuOptionData[]
+    nodeOptions.value = data?.list as menuOptionData[]
   }
 }
 const lookHandle = (id: string) => {
