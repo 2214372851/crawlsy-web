@@ -41,10 +41,41 @@
           <a-progress size="large" :percent="item.nodeLoad" status="normal" show-text/>
         </div>
         <a-space>
-          <a-button type="primary" @click="emit('look', String(item.id))">查看</a-button>
-          <a-button @click="emit('edit', String(item.id))">编辑</a-button>
-          <a-popconfirm content="确认删除吗?" type="warning" @ok="emit('delete', String(item.id))">
-            <a-button status="danger">删除</a-button>
+          <a-button
+              type="primary"
+              @click="emit('look', String(item.id))"
+              v-permission="[
+                {
+                  permission: 'node-detail',
+                  method: 'GET'
+                }
+              ]">
+            查看
+          </a-button>
+          <a-button
+              @click="emit('edit', String(item.id))"
+              v-permission="[
+                    {
+                      permission: 'node-update',
+                      method: 'PUT'
+                    }
+                  ]">
+            编辑
+          </a-button>
+          <a-popconfirm
+              content="确认删除吗?"
+              type="warning"
+              @ok="emit('delete', String(item.id))">
+            <a-button
+                status="danger"
+                v-permission="[
+                  {
+                    permission: 'node-delete',
+                    method: 'DELETE'
+                  }
+                ]">
+              删除
+            </a-button>
           </a-popconfirm>
         </a-space>
       </a-space>
@@ -57,7 +88,7 @@
 import type {NodeItem} from "@/api/modules/node";
 
 
-const props = defineProps<{ renderData: NodeItem[] }>()
+defineProps<{ renderData: NodeItem[] }>()
 const emit = defineEmits<{
   (e: 'edit', id: string): void,
   (e: 'look', id: string): void,

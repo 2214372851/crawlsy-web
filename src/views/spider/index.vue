@@ -1,6 +1,7 @@
 <template>
   <SearchTable
       name="爬虫"
+      permission="spider"
       :search-options="searchOptions"
       :columns="columns"
       :data-api="spiderListApi"
@@ -24,6 +25,11 @@
               v-model="formValue.data.status"
               :options="statusOptions"
               placeholder="请选择状态..."/>
+        </a-form-item>
+        <a-form-item field="command" label="状态">
+          <a-input
+              v-model="formValue.data.command"
+              placeholder="请输入启动命令..."/>
         </a-form-item>
       </a-form>
     </template>

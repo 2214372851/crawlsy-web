@@ -1,5 +1,30 @@
 {
   "files": [],
+  "compilerOptions": {
+    "target": "esnext",
+    "jsx": "preserve",
+    "lib": ["esnext", "dom"],
+    "useDefineForClassFields": true,
+    "baseUrl": "./",
+    "module": "esnext",
+    "moduleResolution": "node",
+    "paths": {
+      "@/*": ["./src/*"],
+      "@dirs/*": ["./src/directive/*"]
+    },
+    "resolveJsonModule": true,
+    "strict": true,
+    "sourceMap": true,
+    "esModuleInterop": true
+  },
+  "include": [
+    "src/**/*.ts",
+    "src/**/*.d.ts",
+    "src/**/*.tsx",
+    "src/**/*.vue",
+    "shims-vue.d.ts"
+  ],
+  "exclude": ["node_modules"],
   "references": [
     {
       "path": "./tsconfig.node.json"

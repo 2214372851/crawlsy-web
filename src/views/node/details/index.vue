@@ -35,14 +35,15 @@
       </a-descriptions>
     </a-spin>
     <a-divider :margin="40" orientation="left">节点任务状态</a-divider>
-    <a-grid v-if="renderData.monitor[renderData.monitor.length - 1]?.tasks.length > 0" :cols="{ xs: 1, sm: 1, md: 2, lg: 3, xl: 3, xxl: 4 }" :colGap="16"
+    <a-grid v-if="renderData.monitor[renderData.monitor.length - 1]?.tasks.length > 0"
+            :cols="{ xs: 1, sm: 1, md: 2, lg: 3, xl: 3, xxl: 4 }" :colGap="16"
             :rowGap="16">
       <a-grid-item v-for="item in renderData.monitor[renderData.monitor.length - 1]?.tasks" :key="item.taskUid">
         <div class="status-card">
           <span class="title">
-            {{ item.taskUid }}
+            {{ item.taskUid }} {{ item.status }}
           </span>
-          <span class="status"></span>
+          <span :class="`status ${Status[item.status as StatusType].color}`"></span>
         </div>
       </a-grid-item>
     </a-grid>
@@ -70,19 +71,14 @@
 import {useRoute} from "vue-router";
 import useLoading from "@/hooks/loading";
 import {onMounted, onUnmounted, ref} from "vue";
-import {type NodeDetailData, nodeInfoApi, type NodeItem} from "@/api/modules/node";
+import {type NodeDetailData, nodeInfoApi, type NodeStatus} from "@/api/modules/node";
 import Chart from "@/components/chart/index.vue";
 import useChartOption from "@/hooks/chart-option";
 import {use} from "echarts/core";
-import {
-  GridComponent,
-  LegendComponent,
-  TitleComponent,
-  ToolboxComponent,
-  TooltipComponent
-} from "echarts/components";
+import {GridComponent, LegendComponent, TitleComponent, ToolboxComponent, TooltipComponent} from "echarts/components";
 import {LineChart, PieChart} from "echarts/charts";
 import {CanvasRenderer} from "echarts/renderers";
+import {Status, type StatusType} from "@/utils/enum";
 
 use([
   TitleComponent,
@@ -615,7 +611,7 @@ const fetchData = async () => {
   try {
     const {code, data} = await nodeInfoApi(resourceId)
     if (code !== 0) return
-    renderData.value = data;
+    renderData.value = data as NodeDetailData;
     const ram: [string, number][] = []
     const cpu: [string, number][] = []
     const recv: [string, number][] = []
@@ -623,8 +619,8 @@ const fetchData = async () => {
     const load1m: [string, number][] = []
     const load5m: [string, number][] = []
     const load15m: [string, number][] = []
-    for (let i = 0; i < data.monitor.length; i++) {
-      const item = data.monitor[i]
+    for (let i = 0; i < (data?.monitor.length as number); i++) {
+      const item = data?.monitor[i] as NodeStatus
       const time = timestampToTime(item.time)
       ram.push([time, item.memory_usage])
       cpu.push([time, item.cpu_usage])
@@ -690,8 +686,23 @@ onUnmounted(() => {
   .status {
     width: 15px;
     height: 15px;
-    background: #39e439;
     border-radius: 50%;
+  }
+
+  .green {
+    background: #39e439;
+  }
+
+  .arcoblue {
+    background: #48c1ff;
+  }
+
+  .red {
+    background: #ff4d4f;
+  }
+
+  .gray {
+    background: #8c8c8c;
   }
 }
 </style>

@@ -3,12 +3,12 @@ import {ref} from "vue";
 import {
     type LoginResponse,
     logoutApi,
-    type MenuData,
     type PermissionData,
     refreshApi,
     type RoleData
 } from "@/api/modules/login";
 import router from "@/router";
+import type {MenuItem} from "@/types/global";
 
 const useUserStore = defineStore('user', () => {
     const username = ref('');
@@ -16,7 +16,7 @@ const useUserStore = defineStore('user', () => {
     const refreshToken = ref('');
     const accessToken = ref('');
     const permissions = ref<PermissionData>({});
-    const menus = ref<MenuData>([]);
+    const menus = ref<MenuItem[]>([]);
     const role = ref<RoleData>([]);
 
     const setUserInfo = (data: LoginResponse) => {

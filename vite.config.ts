@@ -5,7 +5,6 @@ import vue from '@vitejs/plugin-vue'
 import vueDevTools from 'vite-plugin-vue-devtools'
 import {vitePluginForArco} from "@arco-plugins/vite-vue";
 import {visualizer} from "rollup-plugin-visualizer";
-import MonacoEditorPlugin from 'vite-plugin-monaco-editor';
 
 // https://vitejs.dev/config/
 export default defineConfig({

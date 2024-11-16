@@ -2,6 +2,7 @@
   <SearchTable
       name="用户"
       row-key="uid"
+      permission="user"
       :search-options="searchOptions"
       :columns="columns"
       :addFormRef="addFormRef"

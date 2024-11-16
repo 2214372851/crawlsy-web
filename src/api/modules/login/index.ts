@@ -1,5 +1,5 @@
 import {get, post} from "@/api/request";
-import type {ApiResponse} from "@/types/global";
+import type {ApiResponse, MenuItem} from "@/types/global";
 import type {Method} from "axios";
 
 export type LoginData = {
@@ -12,13 +12,6 @@ export type PermissionData = {
 
 export type RoleData = { id: number, name: string }[]
 
-export type MenuData = {
-    "id": number,
-    "name": string,
-    "path": string,
-    "icon": string,
-    "parent": null
-}[]
 
 export type LoginResponse = {
     accessToken: string,
@@ -27,7 +20,7 @@ export type LoginResponse = {
     username: string,
     email: string,
     permissions: PermissionData,
-    menus: MenuData,
+    menus: MenuItem[],
     role: RoleData
 }
 

@@ -16,11 +16,11 @@
 
 <script setup lang="ts">
 
-import {onMounted, ref} from "vue";
+import {ModelRef, onMounted, ref} from "vue";
 import type {SelectOptionData} from "@arco-design/web-vue";
 
 const selectAll = ref(false)
-const formValue = defineModel<any>()
+const formValue = defineModel() as ModelRef<{ data: any }>
 const props = defineProps<{ options: SelectOptionData[] }>()
 const changeHandle = (value: boolean | (string | number | boolean)[]) => {
   const keys = []
@@ -29,8 +29,13 @@ const changeHandle = (value: boolean | (string | number | boolean)[]) => {
   }
   formValue.value.data.taskNodes = value ? keys : []
 }
+interface TaskNode {
+  id: number
+  name: string
+}
 onMounted(()=>{
-  formValue.value.data.taskNodes = formValue.value.data.taskNodes.map(item=>item.id)
+  console.log(formValue.value)
+  formValue.value.data.taskNodes = formValue.value.data.taskNodes?.map((item: TaskNode)=>item.id)
 })
 </script>
 

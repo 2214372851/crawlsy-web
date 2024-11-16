@@ -7,9 +7,8 @@
 
 <script setup lang="ts">
 import MonacoEditor from "@/components/monacoEditor/index.vue";
-import {onMounted, onUnmounted, ref} from "vue";
+import {onUnmounted, ref} from "vue";
 import type {Options} from "@/components/monacoEditor/index";
-import WebSocketService from "@/utils/socket";
 
 const options = ref<Options>({
   automaticLayout: false,

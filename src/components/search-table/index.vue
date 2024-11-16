@@ -1,19 +1,35 @@
 <template>
   <a-card :title="`${name}管理`" :header-style="{borderBottom: 'none'}">
     <Search :loading="loading" :collapsed="collapsed" :search-options="searchOptions" v-model="formValue"
-            @reset="refreshData"
+            @reset="resetData"
             @submit="fetchData"/>
     <a-divider/>
     <a-grid :cols="{ xs: 1, sm: 2, md: 2, lg: 2, xl: 2, xxl: 2 }" :colGap="12" :rowGap="16" class="table-toolbar">
       <a-grid-item :span="1">
         <a-space size="medium">
-          <a-button type="primary" @click="addStartHandle">
+          <a-button
+              type="primary"
+              @click="addStartHandle"
+              v-permission="[
+                  {
+                    permission: `${permission}-create`,
+                    method: 'POST'
+                  }
+                ]">
             <template #icon>
               <icon-plus/>
             </template>
             新建
           </a-button>
-          <a-button status="danger" @click="deleteBatchHandle">
+          <a-button
+              status="danger"
+              @click="deleteBatchHandle"
+              v-permission="[
+                  {
+                    permission: `${permission}-delete`,
+                    method: 'DELETE'
+                  }
+                ]">
             <template #icon>
               <icon-delete/>
             </template>
@@ -23,12 +39,12 @@
       </a-grid-item>
       <a-grid-item suffix style="margin-left: auto">
         <a-space size="medium">
-<!--          <a-button>-->
-<!--            <template #icon>-->
-<!--              <icon-download/>-->
-<!--            </template>-->
-<!--            下载-->
-<!--          </a-button>-->
+          <!--          <a-button>-->
+          <!--            <template #icon>-->
+          <!--              <icon-download/>-->
+          <!--            </template>-->
+          <!--            下载-->
+          <!--          </a-button>-->
           <a-tooltip content="刷新">
             <icon-refresh class="cursor" @click="refreshData" size="18" :disabled="loading"/>
           </a-tooltip>
@@ -75,6 +91,11 @@
         <a-tag color="green" v-if="record.isTiming">是</a-tag>
         <a-tag color="red" v-else>否</a-tag>
       </template>
+      <template #severity="{ record }">
+        <a-tag color="arcoblue" v-if="record.severity == 'info'">通知</a-tag>
+        <a-tag color="orange" v-else-if="record.severity == 'warning'">警告</a-tag>
+        <a-tag color="red" v-else>严重</a-tag>
+      </template>
       <template #status="{ record }">
         <a-tag color="green" v-if="record.status">可用</a-tag>
         <a-tag color="red" v-else>不可用</a-tag>
@@ -82,19 +103,47 @@
       <template #createTime="{ record }">
         <a-tag color="arcoblue">{{ record.createTime }}</a-tag>
       </template>
+      <template #lastTriggerTime="{ record }">
+        <a-tag color="arcoblue">{{ record.lastTriggerTime? record.lastTriggerTime: '未触发' }}</a-tag>
+      </template>
       <template #updateTime="{ record }">
         <a-tag color="arcoblue">{{ record.updateTime }}</a-tag>
       </template>
       <template #optional="{ record }">
         <a-space>
-          <a-button v-if="isLook" type="primary" status="normal" @click="lookHandle?.(record.uid ?? record.id)">
+          <a-button
+              v-if="isLook"
+              type="primary"
+              status="normal"
+              @click="lookHandle?.(record.uid ?? record.id)"
+              v-permission="[
+                  {
+                    permission: `${permission}-detail`,
+                    method: 'GET'
+                  }
+                ]">
             查看
           </a-button>
-          <a-button status="normal" @click="editStartHandle(record.uid ?? record.id)">
+          <a-button
+              status="normal"
+              @click="editStartHandle(record.uid ?? record.id)"
+              v-permission="[
+                  {
+                    permission: `${permission}-update`,
+                    method: 'PUT'
+                  }
+                ]">
             修改
           </a-button>
           <a-popconfirm content="确认删除吗?" type="warning" @ok="deleteHandle(record.uid ?? record.id)">
-            <a-button status="danger">
+            <a-button
+                status="danger"
+                v-permission="[
+                  {
+                    permission: `${permission}-delete`,
+                    method: 'DELETE'
+                  }
+                ]">
               删除
             </a-button>
           </a-popconfirm>
@@ -140,6 +189,7 @@ const addVisible = ref(false)
 const {
   rowKey = 'id',
   isLook = false,
+  permission,
   dataApi,
   editApi,
   infoApi,
@@ -149,12 +199,13 @@ const {
   addFormRef
 } = defineProps<{
   name: string,
+  permission: string,
   isLook?: boolean,
   lookHandle?: (id: string) => void
   rowKey?: string,
   searchOptions: SearchOption[],
   columns: { title: string, dataIndex?: string, slotName?: string }[],
-  dataApi: (params: Record<string, any>) => Promise<ApiResponse<ApiListResponse<any>>>
+  dataApi: (params: any) => Promise<ApiResponse<ApiListResponse<any>>>
   editApi: (id: string, data: any) => Promise<ApiResponse<any>>
   infoApi: (id: string) => Promise<ApiResponse<any>>
   addApi: (data: any) => Promise<ApiResponse<any>>
@@ -209,7 +260,7 @@ const fetchData = async (params: any = basePagination) => {
     const {current, pageSize} = params
     const {code, data} = await dataApi({...formValue.value, page: current, pageSize})
     if (code !== 0) return
-    renderData.value = data.list;
+    renderData.value = data?.list as TableData[];
     pagination.value.current = params.current;
     pagination.value.total = data?.total;
   } catch (err) {
@@ -221,8 +272,12 @@ const fetchData = async (params: any = basePagination) => {
 }
 const refreshData = async () => {
   setLoading(true)
-  formValue.value = {}
   await fetchData(pagination.value)
+}
+const resetData = () => {
+  setLoading(true)
+  formValue.value = {}
+  fetchData(pagination.value)
 }
 const editStartHandle = async (id: string) => {
   setLoading(true)

@@ -1,6 +1,7 @@
 <template>
   <SearchTable
       name="权限"
+      permission="permission"
       :search-options="searchOptions"
       :columns="columns"
       :addFormRef="addFormRef"

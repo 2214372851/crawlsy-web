@@ -1,6 +1,7 @@
 <template>
   <SearchTable
       name="任务"
+      permission="task"
       :search-options="searchOptions"
       :columns="columns"
       :is-look="true"
@@ -75,7 +76,7 @@
         <a-form-item field="taskNodes" label="任务节点">
           <multiple-select
               :options="nodeOptions"
-              v-model="formValue as any"
+              v-model="formValue.data as any"
           />
         </a-form-item>
 

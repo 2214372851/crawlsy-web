@@ -18,9 +18,9 @@
             {{ renderData.status ? '可用' : '不可用' }}
           </a-tag>
         </a-descriptions-item>
-        <a-descriptions-item label="状态">
-          <a-tag :color="renderData.status ? 'green' : 'red'">
-            {{ renderData.status ? '是' : '否' }}
+        <a-descriptions-item label="启动命令">
+          <a-tag>
+            {{ renderData.command ? renderData.command : '无' }}
           </a-tag>
         </a-descriptions-item>
         <a-descriptions-item label="创建时间">
@@ -33,23 +33,33 @@
     </a-skeleton>
     <div class="action-btn">
       <a-space>
-        <a-button type="primary" @click="openIde">
+        <a-button
+            type="primary"
+            @click="openIde"
+            v-permission="[
+              {
+                permission: 'IdeManage',
+                method: 'GET'
+              }
+            ]">
           <template #icon>
             <icon-code-square/>
           </template>
           打开于 WEB IDE
         </a-button>
-        <a-button @click="rebuildTask" :loading="loading">
+        <a-button
+            @click="fetchData"
+            :loading="loading"
+            v-permission="[
+              {
+                permission: 'spider-detail',
+                method: 'GET'
+              }
+            ]">
           <template #icon>
             <icon-sync/>
           </template>
-          重构
-        </a-button>
-        <a-button @click="fetchData" :loading="loading">
           刷新
-        </a-button>
-        <a-button @click="closeTask" :loading="loading">
-          终止
         </a-button>
       </a-space>
       <a-input-search
@@ -83,7 +93,16 @@
       </template>
       <template #optional="{ record }">
         <a-space>
-          <a-button type="primary" status="normal" @click="lookTask(record.id)">
+          <a-button
+              type="primary"
+              status="normal"
+              @click="lookTask(record.id)"
+              v-permission="[
+                {
+                  permission: 'task-detail',
+                  method: 'GET'
+                }
+              ]">
             查看
           </a-button>
         </a-space>
@@ -95,7 +114,7 @@
 <script setup lang="ts">
 import {useRoute} from "vue-router";
 import {onMounted, ref} from "vue";
-import {Message, type TableColumnData, type TableRowSelection} from "@arco-design/web-vue";
+import {type TableColumnData, type TableRowSelection} from "@arco-design/web-vue";
 import router from "@/router";
 import {type SpiderTaskItem, spiderTaskListApi} from "@/api/modules/spider";
 import useLoading from "@/hooks/loading";
@@ -148,6 +167,7 @@ const columns: TableColumnData[] = [
   }
 ]
 const renderData = ref<SpiderTaskItem>({
+  command: "",
   createTime: "",
   founderUser: {uid: "", username: ""},
   id: 0,
@@ -171,20 +191,14 @@ const fetchData = async () => {
   try {
     const {code, data} = await spiderTaskListApi(resourceId)
     if (code !== 0) return
-    renderData.value = data;
-    cacheData = data.taskmodel_set
+    renderData.value = data as SpiderTaskItem;
+    cacheData = (data as SpiderTaskItem).taskmodel_set
   } catch (err) {
     console.error(err)
     // you can report use errorHandler or other
   } finally {
     setLoading(false)
   }
-}
-const rebuildTask = () => {
-  Message.success(`任务已重构 ${JSON.stringify(selectedKeys.value)}`)
-}
-const closeTask = () => {
-  Message.success(`任务已关闭 ${JSON.stringify(selectedKeys.value)}`)
 }
 const lookTask = (id: string) => {
   router.push({path: '/task/details', query: {id}})

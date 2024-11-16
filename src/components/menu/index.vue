@@ -21,108 +21,20 @@
         <a-menu-item v-for="subMenu in menu.children" :key="subMenu.path">
           {{ subMenu.name }}
         </a-menu-item>
-
       </a-sub-menu>
-
     </template>
-
-
   </a-menu>
 </template>
 
 <script setup lang="ts">
 import {useRouter} from "vue-router";
 import type {MenuItem} from "@/types/global";
+import useUserStore from "@/stores/modules/user";
 
 const router = useRouter()
 const selectKey = router.currentRoute.value.path
 const emits = defineEmits(['collapse'])
-
-
-const menus = [
-  {
-    "id": 1,
-    "createTime": "2024-07-07 14:08:03",
-    "updateTime": "2024-07-07 14:08:03",
-    "parent": null,
-    "name": "仪表板",
-    "icon": "IconApps",
-    "path": "/dashboard"
-  },
-  {
-    "id": 2,
-    "createTime": "2024-07-07 14:08:03",
-    "updateTime": "2024-07-07 14:08:03",
-    "parent": null,
-    "name": "节点管理",
-    "icon": "iconStorage",
-    "path": "/node"
-  },
-  {
-    "id": 5,
-    "createTime": "2024-07-07 14:08:03",
-    "updateTime": "2024-07-07 14:08:03",
-    "parent": null,
-    "name": "爬虫管理",
-    "icon": "IconBug",
-    "path": "/spider"
-  },
-  {
-    "id": 8,
-    "createTime": "2024-07-07 14:08:03",
-    "updateTime": "2024-07-07 14:08:03",
-    "parent": null,
-    "name": "任务管理",
-    "icon": "iconSelectAll",
-    "path": "/task"
-  },
-  {
-    "id": 9,
-    "createTime": "2024-07-07 14:08:03",
-    "updateTime": "2024-07-07 14:08:03",
-    "parent": null,
-    "name": "系统管理",
-    "icon": "IconSettings",
-    "path": "/user"
-  },
-  {
-    "id": 6,
-    "createTime": "2024-07-07 14:08:03",
-    "updateTime": "2024-07-07 14:08:03",
-    "parent": 9,
-    "name": "用户管理",
-    "icon": "IconUser",
-    "path": "/user"
-  },
-  {
-    "id": 7,
-    "createTime": "2024-07-07 14:08:03",
-    "updateTime": "2024-07-07 14:08:03",
-    "parent": 9,
-    "name": "权限管理",
-    "icon": "iconLock",
-    "path": "/permission"
-  },
-  {
-    "id": 10,
-    "createTime": "2024-07-07 14:08:03",
-    "updateTime": "2024-07-07 14:08:03",
-    "parent": 9,
-    "name": "角色管理",
-    "icon": "iconLock",
-    "path": "/role"
-  },
-  {
-    "id": 11,
-    "createTime": "2024-07-07 14:08:03",
-    "updateTime": "2024-07-07 14:08:03",
-    "parent": 9,
-    "name": "菜单管理",
-    "icon": "iconLock",
-    "path": "/menu"
-  },
-]
-
+const userStore = useUserStore()
 
 const onClickMenuItem = (key: string) => {
   router.push({path: key})
@@ -141,10 +53,19 @@ const buildMenuTree = (menus: MenuItem[]) => {
     });
     return {...menu, children};
   };
-  return topLevelMenus.map(menu => buildTree(menu));
+  return [
+    {
+      "id": 0,
+      "name": "仪表盘",
+      "path": "/dashboard",
+      "icon": "iconDashboard",
+      "parent": null,
+      "children": []
+    },
+    ...topLevelMenus.map(menu => buildTree(menu)).sort((a, b) => a.children.length - b.children.length)
+  ];
 }
-
-const newMenus = buildMenuTree(menus)
+const newMenus = buildMenuTree(userStore.menus)
 </script>
 
 <style scoped lang="less">

@@ -7,12 +7,22 @@
     </div>
     <a-divider/>
     <div class="toolbar">
-      <a-button type="primary" @click="addStartHandle">
-        <template #icon>
-          <icon-plus/>
-        </template>
-        新建
-      </a-button>
+      <div>
+        <a-button
+            type="primary"
+            @click="addStartHandle"
+            v-permission="[
+            {
+              permission: 'role-create',
+              method: 'POST'
+            }
+          ]">
+          <template #icon>
+            <icon-plus/>
+          </template>
+          新建
+        </a-button>
+      </div>
       <a-input-search
           style="width: 240px;"
           placeholder="请输入角色名称..."
@@ -41,9 +51,27 @@
                   </a-descriptions-item>
                 </a-descriptions>
                 <a-space direction="vertical">
-                  <a-button type="primary" @click="editStartHandle(item.id)">修改</a-button>
+                  <a-button
+                      type="primary"
+                      @click="editStartHandle(item.id)"
+                      v-permission="[
+                        {
+                          permission: 'role-update',
+                          method: 'PUT'
+                        }
+                      ]">
+                    修改
+                  </a-button>
                   <a-popconfirm content="确认删除吗?" type="warning" @ok="deleteHandle(item.id)">
-                    <a-button type="primary" status="danger">
+                    <a-button
+                        type="primary"
+                        status="danger"
+                        v-permission="[
+                          {
+                            permission: 'role-delete',
+                            method: 'DELETE'
+                          }
+                        ]">
                       删除
                     </a-button>
                   </a-popconfirm>
@@ -308,9 +336,9 @@ const fetchData = async (params: any = basePagination) => {
     const {current, pageSize} = params
     const {code, data} = await roleListApi({...formValue.value, page: current, pageSize})
     if (code !== 0) return
-    renderData.value = data.list;
+    renderData.value = data?.list as RoleItem[];
     pagination.value.current = params.current;
-    pagination.value.total = data?.total;
+    pagination.value.total = data?.total as number;
   } catch (err) {
     console.error(err)
     // you can report use errorHandler or other

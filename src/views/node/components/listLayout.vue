@@ -43,10 +43,30 @@
       </div>
     </template>
     <template #actions>
-      <icon-search @click="emit('look', String(item.id))"/>
-      <icon-edit @click="emit('edit', String(item.id))"/>
+      <icon-search
+          @click="emit('look', String(item.id))"
+          v-permission="[
+            {
+              permission: 'node-detail',
+              method: 'GET'
+            }
+          ]"/>
+      <icon-edit
+          @click="emit('edit', String(item.id))"
+          v-permission="[
+            {
+              permission: 'node-update',
+              method: 'PUT'
+            }
+          ]"/>
       <a-popconfirm content="确认删除吗?" type="warning" @ok="emit('delete', String(item.id))">
-        <icon-delete/>
+        <icon-delete
+            v-permission="[
+              {
+                permission: 'node-delete',
+                method: 'DELETE'
+              }
+            ]"/>
       </a-popconfirm>
     </template>
   </a-list-item>
@@ -56,7 +76,7 @@
 import type {NodeItem} from "@/api/modules/node";
 
 
-const props = defineProps<{ renderData: NodeItem[] }>()
+defineProps<{ renderData: NodeItem[] }>()
 const emit = defineEmits<{
   (e: 'edit', id: string): void,
   (e: 'look', id: string): void,

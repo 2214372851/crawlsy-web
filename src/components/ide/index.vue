@@ -10,7 +10,16 @@
         </a-button>
       </a-tooltip>
       <a-tooltip content="保存">
-        <a-button :loading="saveLoading" @click="saveChange">
+        <a-button
+            :loading="saveLoading"
+            @click="saveChange"
+            v-permission="[
+                {
+                  permission: 'IdeFileManage',
+                  method: 'POSTa'
+                }
+            ]"
+        >
           <template #icon>
             <icon-save/>
           </template>

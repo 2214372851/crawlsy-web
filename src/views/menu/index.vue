@@ -1,6 +1,7 @@
 <template>
   <SearchTable
       name="菜单"
+      permission="menu"
       :search-options="searchOptions"
       :columns="columns"
       :data-api="menuListApi"

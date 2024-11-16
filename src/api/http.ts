@@ -40,6 +40,7 @@ http.interceptors.response.use(
                     return
                 }
                 try {
+                    if (response.config.url?.includes("refresh")) return
                     userStore.accessToken = ''
                     await userStore.refresh()
                     return await http(response.config)

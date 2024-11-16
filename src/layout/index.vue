@@ -54,7 +54,6 @@
 
             <a-dropdown @select="handleSelectProfile" trigger="hover">
               <a-avatar :image-url="getUserAvatar()">
-                <!--                {{ userStore.username[0] }}-->
               </a-avatar>
               <template #content>
                 <a-doption value="avatar">
@@ -68,18 +67,6 @@
                     <icon-idcard/>
                   </template>
                   个人信息
-                </a-doption>
-                <a-doption value="setting">
-                  <template #icon>
-                    <icon-settings/>
-                  </template>
-                  偏好设置
-                </a-doption>
-                <a-doption value="apiKey">
-                  <template #icon>
-                    <icon-cloud/>
-                  </template>
-                  API Key
                 </a-doption>
                 <a-dgroup title="操作">
                   <a-doption value="logout">
@@ -119,7 +106,7 @@
 
 <script setup lang="ts">
 import {computed, ref} from 'vue'
-import {useRoute} from "vue-router";
+import {useRoute, useRouter} from "vue-router";
 import Menu from "@/components/menu/index.vue"
 import type {BreadcrumbItem} from "@/types/global";
 import useAppStore from "@/stores/modules/app";
@@ -130,6 +117,7 @@ import {md5} from "@/utils/crypt";
 const route = useRoute()
 const appStore = useAppStore()
 const userStore = useUserStore()
+const router = useRouter()
 const fullscreen = ref(false)
 const collapsed = ref(window.innerWidth < 1200)
 const themeOptions = [
@@ -201,6 +189,9 @@ const handleSelectProfile = (val: string | number | Record<string, any> | undefi
       break
     case 'logout':
       userStore.logout()
+      break
+    case 'profile':
+        router.push({path: '/profile'})
       break
 
   }

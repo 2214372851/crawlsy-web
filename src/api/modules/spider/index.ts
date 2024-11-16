@@ -10,7 +10,8 @@ export interface SpiderItem {
     updateTime: string,
     name: string,
     spiderUid: string,
-    status: string
+    status: string,
+    command: string,
 }
 
 export interface SpiderTaskItem extends SpiderItem {
@@ -29,7 +30,8 @@ export type querySpiderData = {
 
 export type SpiderAddEditData = {
     name: string,
-    status: boolean
+    status: boolean,
+    command: string,
 }
 
 export const spiderOptionApi = () => get<ApiResponse<ApiListResponse<menuOptionData>>>('/spider-option/')

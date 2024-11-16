@@ -8,6 +8,7 @@ import App from './App.vue'
 import router from './router'
 import '@arco-design/web-vue/dist/arco.css'
 import * as ArcoIconsVue from '@arco-design/web-vue/es/icon';
+import {registerDirectives} from "@/directives";
 
 const app = createApp(App)
 Modal._context = app._context
@@ -20,5 +21,7 @@ app.use(ArcoVue, {
 })
 app.use(pinia)
 app.use(router)
+registerDirectives(app)
+
 
 app.mount('#app')

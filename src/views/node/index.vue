@@ -15,14 +15,29 @@
         <a-grid-item suffix>
           <div style="display:flex;justify-content: end;">
             <a-space>
-              <a-button type="primary" @click="addStartHandle">
+              <a-button
+                  type="primary"
+                  @click="addStartHandle"
+                  v-permission="[
+                    {
+                      permission: 'node-create',
+                      method: 'POST'
+                    }
+                  ]">
                 <template #icon>
                   <icon-plus/>
                 </template>
                 新建
               </a-button>
               <a-tooltip content="刷新">
-                <a-button @click="refreshData">
+                <a-button
+                    @click="refreshData"
+                    v-permission="[
+                      {
+                        permission: 'node-list',
+                        method: 'GET'
+                      }
+                    ]">
                   <template #icon>
                     <icon-refresh/>
                   </template>
@@ -300,7 +315,7 @@ const fetchData = async (params: any = basePagination) => {
     const {current, pageSize} = params
     const {code, data} = await nodeListApi({...formValue.value, page: current, pageSize})
     if (code !== 0) return
-    renderData.value = data.list;
+    renderData.value = data?.list as NodeItem[];
     pagination.value.current = params.current;
     pagination.value.total = data?.total;
   } catch (err) {
