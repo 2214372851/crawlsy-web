@@ -16,11 +16,13 @@
     <a-modal v-model:visible="uploadVisible" title="上传资源" @before-ok="handelUploadBefore"
              @before-close="handelUploadBefore">
       <a-upload
+
           draggable
           :show-upload-button="true"
           :custom-request="customRequest"
-          v-model:file-list="fileList"/>
-    </a-modal>
+          v-model:file-list="fileList"
+          />
+</a-modal>
   </div>
 
 </template>

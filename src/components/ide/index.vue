@@ -1,5 +1,16 @@
 <template>
-  <div style="height: 100%">
+  <div
+      style="height: 100%"
+      v-permission="[
+        {
+          permission: 'IdeManage',
+          method: 'GET'
+        },
+        {
+          permission: 'IdeLazyManage',
+          method: 'GET'
+        }
+      ]">
     <a-space>
       <a-tooltip content="展开/收缩文件栏">
         <a-button @click="handleCollapsed">
@@ -16,7 +27,7 @@
             v-permission="[
                 {
                   permission: 'IdeFileManage',
-                  method: 'POST'
+                  method: 'PUT'
                 }
             ]"
         >
@@ -50,10 +61,36 @@
             <a-dropdown trigger="contextMenu" alignPoint :style="{display:'block'}">
               <div style="overflow: hidden;white-space: nowrap">{{ nodeData?.title }}</div>
               <template #content>
-                <a-doption @click="addChange(nodeData.key)">新建</a-doption>
-                <a-doption @click="delChange(nodeData.key)">删除</a-doption>
-                <a-doption @click="renameChange(nodeData.key)">重命名</a-doption>
-                <a-doption @click="uploadChange(nodeData.key)">上传</a-doption>
+                <a-doption @click="addChange(nodeData.key)"
+                    v-permission="[
+                      {
+                        permission: 'IdeManage',
+                        method: 'POST'
+                      }
+                    ]">新建</a-doption>
+                <a-doption @click="delChange(nodeData.key)"
+                    v-permission="[
+                      {
+                        permission: 'IdeManage',
+                        method: 'DELETE'
+                      }
+                    ]">删除</a-doption>
+                <a-doption
+                    @click="renameChange(nodeData.key)"
+                    v-permission="[
+                      {
+                        permission: 'IdeManage',
+                        method: 'PUT'
+                      }
+                    ]">重命名</a-doption>
+                <a-doption
+                    @click="uploadChange(nodeData.key)"
+                    v-permission="[
+                      {
+                        permission: 'IdeFileManage',
+                        method: 'POST'
+                      }
+                    ]">上传</a-doption>
               </template>
             </a-dropdown>
 
