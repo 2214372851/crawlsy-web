@@ -47,6 +47,7 @@ export type TaskAddEditData = {
     isTiming: boolean,
     taskNodes: number[]
 }
+export const taskExtendApi = (taskUid: string, nodeUid: string) => get<ApiResponse<string>>('/scheduler-extend/', {taskUid, nodeUid})
 export const taskListApi = (params: queryTaskData) => get<ApiResponse<ApiListResponse<TaskItem>>>('/task/', params)
 
 export const taskInfoApi = (id: string) => get<ApiResponse<TaskDetailItem>>(`/task/${id}/`)

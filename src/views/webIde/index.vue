@@ -5,12 +5,21 @@
         :loadDir="loadMore"
         :load-file-api="resourceLoadApi"
         :save-loading="loading"
+        @upload-change="showUpload"
         @save-change="saveResourceData"
         @rename-change="renameResource"
         @del-change="delResource"
         @add-change="addResource"/>
     <a-modal v-model:visible="visible" title="资源" @cancel="handleCancel" @before-ok="handleBeforeOk">
       <a-input v-model="form.name"/>
+    </a-modal>
+    <a-modal v-model:visible="uploadVisible" title="上传资源" @before-ok="handelUploadBefore"
+             @before-close="handelUploadBefore">
+      <a-upload
+          draggable
+          :show-upload-button="true"
+          :custom-request="customRequest"
+          v-model:file-list="fileList"/>
     </a-modal>
   </div>
 
@@ -22,16 +31,19 @@ import Ide from "@/components/ide/index.vue";
 import {onMounted, ref} from "vue";
 import {
   resourceCreateApi,
-  type resourceData, resourceDeleteApi,
+  type resourceData,
+  resourceDeleteApi,
   resourceLazyLoadApi,
   resourceListApi,
-  resourceLoadApi, resourceRenameApi,
+  resourceLoadApi,
+  resourceRenameApi,
+  resourceUploadApi,
   resourceWriteApi
 } from "@/api/modules/ide";
-import {Message, type TreeNodeData} from '@arco-design/web-vue';
+import {FileItem, Message, RequestOption, type TreeNodeData} from '@arco-design/web-vue';
 import useLoading from "@/hooks/loading";
 
-
+const uploadPath = ref('')
 const {loading, setLoading} = useLoading()
 const form = ref({
   name: '',
@@ -39,6 +51,8 @@ const form = ref({
   isRename: true
 })
 const visible = ref(false)
+const uploadVisible = ref(false)
+const fileList = ref<FileItem[]>([])
 const route = useRoute();
 const fileTreeOption = ref<TreeNodeData[]>([])
 const handleCancel = () => {
@@ -129,9 +143,11 @@ const updateTreeOption = (treeNode: TreeNodeData[], key: string, type: string, a
         }
         newNode.children?.push(apiNode as TreeNodeData)
         newNode.children?.sort((item => item.isLeaf ? 1 : -1))
+      } else if (type === 'upload') {
+        delete newNode.children
       }
     }
-    if (node.children) {
+    if (node.children && (type !== 'upload' && node?.key !== key)) {
       newNode.children = updateTreeOption(node.children, key, type, apiNode)
     }
     newTreeNode.push(newNode)
@@ -151,6 +167,35 @@ const addResource = async (key: string) => {
   form.value.path = key
   form.value.isRename = false
   visible.value = true
+}
+const showUpload = (key: string) => {
+  if (!key) return
+  uploadPath.value = key
+  uploadVisible.value = true
+}
+const customRequest = async (option: RequestOption) => {
+  const {onError, onSuccess, fileItem} = option
+  setLoading(true)
+  try {
+    const {code} = await resourceUploadApi(uploadPath.value, fileItem.file as File)
+    if (code !== 0) {
+      onError()
+    } else {
+      onSuccess()
+    }
+  } catch (e) {
+    console.error(e)
+    onError()
+  } finally {
+    setLoading(false)
+  }
+
+}
+const handelUploadBefore = async () => {
+  if (fileList.value.length > 0) {
+    fileTreeOption.value = updateTreeOption(fileTreeOption.value, uploadPath.value, 'upload')
+  }
+  fileList.value = []
 }
 const renameResource = async (key: string) => {
   form.value.path = key

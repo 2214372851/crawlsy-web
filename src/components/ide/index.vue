@@ -16,7 +16,7 @@
             v-permission="[
                 {
                   permission: 'IdeFileManage',
-                  method: 'POSTa'
+                  method: 'POST'
                 }
             ]"
         >
@@ -53,6 +53,7 @@
                 <a-doption @click="addChange(nodeData.key)">新建</a-doption>
                 <a-doption @click="delChange(nodeData.key)">删除</a-doption>
                 <a-doption @click="renameChange(nodeData.key)">重命名</a-doption>
+                <a-doption @click="uploadChange(nodeData.key)">上传</a-doption>
               </template>
             </a-dropdown>
 
@@ -141,7 +142,7 @@ const langOptions = [
 
 ]
 const codeVals = ref<IdeTabItem[]>([])
-const emit = defineEmits(['save-change', 'del-change', 'add-change', 'rename-change'])
+const emit = defineEmits(['save-change', 'del-change', 'add-change', 'rename-change', 'upload-change'])
 const handleCollapsed = () => {
   if (splitSize.value !== 0) {
     lastSplitSize = splitSize.value
@@ -177,6 +178,7 @@ watch(
     }
 )
 const getFileContent = async (seletcedKeys: string[], treeData: { node: TreeNodeData }) => {
+  if (treeData.node.isLeaf !== true) return
   if (seletcedKeys.length === 0) return
   if (codeVals.value.filter(item => item.key === seletcedKeys[0]).length > 0) {
     tabKey.value = seletcedKeys[0]
@@ -213,6 +215,9 @@ const delChange = async (key: string) => {
 }
 const addChange = async (key: string) => {
   emit('add-change', key)
+}
+const uploadChange = async (key: string) => {
+  emit('upload-change', key)
 }
 const renameChange = async (key: string) => {
   emit('rename-change', key)

@@ -26,6 +26,18 @@ export const post = <T>(
     })
 }
 
+export const upload = <T>(url: string, data: FormData, timeout = 5000): Promise<T> => {
+    return http({
+        method: 'post',
+        headers: {
+            'Content-Type': 'multipart/form-data'
+        },
+        timeout,
+        url,
+        data
+    })
+}
+
 export const put = <T>(
     url: string,
     data: Record<string, any> = {},

@@ -142,10 +142,38 @@
                   </a-space>
                 </template>
               </a-card-meta>
-              <a-button type="primary" @click="openLogDrawer(item.nodeUid)" v-show="item.status === 1">查看日志
-              </a-button>
-            </a-space>
 
+              <div v-show="item.status === 1">
+                <div
+                    v-permission="[
+                      {
+                        permission: 'schedulerExtend',
+                        method: 'GET'
+                      }
+                    ]">
+                  <a-descriptions :data="extendJson" v-if="extendJson.length > 0"/>
+                  <div class="extend-info" v-else-if="extendInfo">
+                    {{ extendInfo }}
+                  </div>
+                </div>
+                <a-space>
+                  <a-button type="primary" @click="openLogDrawer(item.nodeUid)">
+                    查看日志
+                  </a-button>
+                  <a-button
+                      type="primary"
+                      @click="openExtend(item.nodeUid)"
+                      v-permission="[
+                        {
+                          permission: 'schedulerExtend',
+                          method: 'GET'
+                        }
+                      ]">
+                    查看拓展
+                  </a-button>
+                </a-space>
+              </div>
+            </a-space>
           </a-card>
         </a-grid-item>
       </a-grid>
@@ -171,7 +199,7 @@
 
 import WebSocketService from '@/utils/socket';
 import useLoading from "@/hooks/loading";
-import {type TaskDetailItem, taskInfoApi} from "@/api/modules/task";
+import {type TaskDetailItem, taskExtendApi, taskInfoApi} from "@/api/modules/task";
 import {onMounted, ref} from "vue";
 import {useRoute, useRouter} from "vue-router";
 import {Status, type StatusType} from "@/utils/enum";
@@ -207,6 +235,8 @@ const taskCount = ref({
 })
 const userStore = useUserStore()
 const logNodeUid = ref('')
+const extendInfo = ref('')
+const extendJson = ref([])
 let socket: WebSocketService | null = null
 
 const openSpiderDetail = () => {
@@ -335,7 +365,31 @@ const wsOnOpen = () => {
 const wsOnClose = () => {
   logsValue.value += '\n[连接已断开]\n'
 }
-
+const openExtend = async (nodeUid) => {
+  const {code, data} = await taskExtendApi(renderData.value.taskUid, nodeUid)
+  if (code !== 0) {
+    Message.error({
+      content: "获取拓展信息失败",
+      duration: 5000
+    })
+    return
+  }
+  extendInfo.value = ''
+  extendJson.value = []
+  try {
+    const jsonData = JSON.parse(data)
+    const newJsonData = []
+    for (const key in jsonData) {
+      newJsonData.push({
+        label: key,
+        value: jsonData[key]
+      })
+    }
+    extendJson.value = newJsonData
+  } catch (e) {
+    extendInfo.value = data
+  }
+}
 
 onMounted(async () => {
   await fetchData()
@@ -378,4 +432,10 @@ onMounted(async () => {
   }
 }
 
+.extend-info {
+  padding: 16px;
+  background: var(--color-fill-1);
+  border-radius: 4px;
+  margin: 16px 0;
+}
 </style>
