@@ -20,6 +20,9 @@
               v-model="formValue.data.name"
               placeholder="请输入名称..."/>
         </a-form-item>
+        <a-form-item field="status" label="状态">
+          <a-switch v-model="formValue.data.status" />
+        </a-form-item>
         <a-form-item field="isTiming" label="定时">
           <a-select
               v-model="formValue.data.isTiming"
@@ -53,6 +56,9 @@
           <a-input
               v-model="formValue.data.name"
               placeholder="请输入名称..."/>
+        </a-form-item>
+        <a-form-item field="status" label="状态">
+          <a-switch v-model="formValue.data.status" />
         </a-form-item>
         <a-form-item field="isTiming" label="定时任务">
           <a-select

@@ -151,7 +151,7 @@
                         method: 'GET'
                       }
                     ]">
-                  <a-descriptions :data="extendJson" v-if="extendJson.length > 0"/>
+                  <a-descriptions :style="{padding: '10px 0'}" size="mini" :column="1" :data="extendJson" v-if="extendJson.length > 0" bordered/>
                   <div class="extend-info" v-else-if="extendInfo">
                     {{ extendInfo }}
                   </div>

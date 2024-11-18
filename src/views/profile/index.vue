@@ -65,12 +65,21 @@ const fetchData = async () => {
   }
 }
 const handleFeishuAuth = async () => {
-  const {code} = await userFeishuApi()
-  if (code !== 0) return
-  Message.success({
-    content: "飞书认证成功",
-    duration: 5000
-  })
+  setLoading(true);
+  try {
+    const {code} = await userFeishuApi()
+    if (code !== 0) return
+    Message.success({
+      content: "飞书认证成功",
+      duration: 5000
+    })
+    await fetchData()
+  } catch (err) {
+    console.error(err)
+    // you can report use errorHandler or other
+  } finally {
+    setLoading(false)
+  }
 }
 onMounted(async () => {
   await fetchData()
