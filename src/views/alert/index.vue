@@ -284,7 +284,7 @@ const columns = [
     title: '操作',
     slotName: 'optional',
     fixed: 'right',
-    width: 160
+    maxWidth: 160,
   }
 ]
 const handleSearch = async (value: string) => {

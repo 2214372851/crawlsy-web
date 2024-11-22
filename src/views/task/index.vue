@@ -82,10 +82,9 @@
         <a-form-item field="taskNodes" label="任务节点">
           <multiple-select
               :options="nodeOptions"
-              v-model="formValue.data as any"
+              v-model="formValue as any"
           />
         </a-form-item>
-
       </a-form>
     </template>
   </SearchTable>
@@ -190,7 +189,7 @@ const columns = [
     title: '操作',
     slotName: 'optional',
     fixed: 'right',
-    width: 160
+    maxWidth: 160,
   }
 ]
 const getSpiderOption = async () => {

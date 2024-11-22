@@ -36,7 +36,6 @@ const renderChart = ref(false)
 
 nextTick(() => {
   renderChart.value = true
-  console.log(renderChart.value, 'dd')
 })
 </script>
 

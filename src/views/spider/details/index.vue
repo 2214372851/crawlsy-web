@@ -163,7 +163,6 @@ const columns: TableColumnData[] = [
     title: '操作',
     slotName: 'optional',
     fixed: 'right',
-    width: 160
   }
 ]
 const renderData = ref<SpiderTaskItem>({

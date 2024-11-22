@@ -1,9 +1,7 @@
 <template>
   <a-card>
-    <a-skeleton animation>
-      <a-skeleton-line :rows="5" v-if="loading"/>
+    <a-spin style="width: 100%" :loading="loading">
       <a-descriptions
-          v-else
           :column="3"
           :title="renderData.name"
           layout="inline-vertical"
@@ -38,7 +36,7 @@
           <a-tag color="arcoblue">{{ renderData.updateTime }}</a-tag>
         </a-descriptions-item>
       </a-descriptions>
-    </a-skeleton>
+    </a-spin>
 
     <div v-if="taskCount.done+taskCount.running+taskCount.failed > 0">
       <a-divider :margin="40" orientation="left">任务状态</a-divider>
@@ -119,9 +117,8 @@
         </a-tooltip>
       </a-space>
     </div>
-    <a-skeleton animation>
-      <a-skeleton-line :rows="3" v-if="loading"/>
-      <a-grid v-else :cols="{ xs: 1, sm: 1, md: 2, lg: 3, xl: 3, xxl: 4 }" :colGap="16" :rowGap="16">
+    <a-spin style="width: 100%" :loading="loading">
+      <a-grid :cols="{ xs: 1, sm: 1, md: 2, lg: 3, xl: 3, xxl: 4 }" :colGap="16" :rowGap="16">
         <a-grid-item v-for="item in renderData.taskNodes" :key="item.id">
           <a-card>
             <a-space direction="vertical" fill>
@@ -142,7 +139,7 @@
                   </a-space>
                 </template>
               </a-card-meta>
-              <div v-show="item.status === 1">
+              <div v-show="item.status & (2 | 1 | 4)">
                 <div
                     v-permission="[
                       {
@@ -150,7 +147,8 @@
                         method: 'GET'
                       }
                     ]">
-                  <a-descriptions :style="{padding: '10px 0'}" size="mini" :column="1" :data="extendJson" v-if="extendJson.length > 0" bordered/>
+                  <a-descriptions :style="{padding: '10px 0'}" size="mini" :column="1" :data="extendJson"
+                                  v-if="extendJson.length > 0" bordered/>
                   <div class="extend-info" v-else-if="extendInfo">
                     {{ extendInfo }}
                   </div>
@@ -176,7 +174,8 @@
           </a-card>
         </a-grid-item>
       </a-grid>
-    </a-skeleton>
+    </a-spin>
+    <result-table :id="resourceId"/>
     <a-drawer
         width="70%"
         title="日志查看器"
@@ -199,13 +198,14 @@
 import WebSocketService from '@/utils/socket';
 import useLoading from "@/hooks/loading";
 import {type TaskDetailItem, taskExtendApi, taskInfoApi} from "@/api/modules/task";
-import {onMounted, ref} from "vue";
+import {onMounted, onUnmounted, ref} from "vue";
 import {useRoute, useRouter} from "vue-router";
 import {Status, type StatusType} from "@/utils/enum";
 import {schedulerDeployApi, schedulerReloadApi, schedulerStopApi} from "@/api/modules/scheduler";
 import {Message} from "@arco-design/web-vue";
 import Logger from "@/components/logger/index.vue";
 import useUserStore from "@/stores/modules/user";
+import ResultTable from "@/views/task/components/resultTable.vue";
 
 const router = useRouter()
 const logsValue = ref<string>('')
@@ -236,6 +236,7 @@ const userStore = useUserStore()
 const logNodeUid = ref('')
 const extendInfo = ref('')
 const extendJson = ref([])
+let timer = null
 let socket: WebSocketService | null = null
 
 const openSpiderDetail = () => {
@@ -392,8 +393,13 @@ const openExtend = async (nodeUid) => {
 
 onMounted(async () => {
   await fetchData()
+  timer = setInterval(async () => {
+    await fetchData()
+  }, 15000)
 })
-
+onUnmounted(() => {
+  clearInterval(timer)
+})
 </script>
 
 <style scoped lang="less">
