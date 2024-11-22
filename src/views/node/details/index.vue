@@ -39,12 +39,14 @@
             :cols="{ xs: 1, sm: 1, md: 2, lg: 3, xl: 3, xxl: 4 }" :colGap="16"
             :rowGap="16">
       <a-grid-item v-for="item in renderData.monitor[renderData.monitor.length - 1]?.tasks" :key="item.taskUid">
-        <div class="status-card">
-          <span class="title">
-            {{ item.taskUid }} {{ item.status }}
-          </span>
-          <span :class="`status ${Status[item.status as StatusType].color}`"></span>
-        </div>
+        <a-tooltip :content="`${Status[item.status as StatusType].msg}`">
+          <div class="status-card">
+            <span class="title">
+              {{ item.taskUid }}
+            </span>
+            <span :class="`status ${Status[item.status as StatusType].color}`"></span>
+          </div>
+        </a-tooltip>
       </a-grid-item>
     </a-grid>
 

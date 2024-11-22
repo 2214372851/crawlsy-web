@@ -119,7 +119,7 @@
         </a-tooltip>
       </a-space>
     </div>
-    <a-skeleton animation v-if="!renderData.status">
+    <a-skeleton animation>
       <a-skeleton-line :rows="3" v-if="loading"/>
       <a-grid v-else :cols="{ xs: 1, sm: 1, md: 2, lg: 3, xl: 3, xxl: 4 }" :colGap="16" :rowGap="16">
         <a-grid-item v-for="item in renderData.taskNodes" :key="item.id">
@@ -142,7 +142,6 @@
                   </a-space>
                 </template>
               </a-card-meta>
-
               <div v-show="item.status === 1">
                 <div
                     v-permission="[
