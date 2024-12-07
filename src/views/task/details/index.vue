@@ -235,8 +235,8 @@ const taskCount = ref({
 const userStore = useUserStore()
 const logNodeUid = ref('')
 const extendInfo = ref('')
-const extendJson = ref([])
-let timer = null
+const extendJson = ref<{ label: string, value: string }[]>([])
+let timer: number | null = null
 let socket: WebSocketService | null = null
 
 const openSpiderDetail = () => {
@@ -365,7 +365,7 @@ const wsOnOpen = () => {
 const wsOnClose = () => {
   logsValue.value += '\n[连接已断开]\n'
 }
-const openExtend = async (nodeUid) => {
+const openExtend = async (nodeUid: string) => {
   const {code, data} = await taskExtendApi(renderData.value.taskUid, nodeUid)
   if (code !== 0) {
     Message.error({
@@ -374,10 +374,14 @@ const openExtend = async (nodeUid) => {
     })
     return
   }
+  if (!data) {
+    extendInfo.value = '暂无拓展信息'
+    return
+  }
   extendInfo.value = ''
   extendJson.value = []
   try {
-    const jsonData = JSON.parse(data)
+    const jsonData = JSON.parse(data as string)
     const newJsonData = []
     for (const key in jsonData) {
       newJsonData.push({
@@ -387,7 +391,7 @@ const openExtend = async (nodeUid) => {
     }
     extendJson.value = newJsonData
   } catch (e) {
-    extendInfo.value = data
+    extendInfo.value = data as string
   }
 }
 
@@ -398,7 +402,9 @@ onMounted(async () => {
   }, 15000)
 })
 onUnmounted(() => {
-  clearInterval(timer)
+  if (timer) {
+    clearInterval(timer)
+  }
 })
 </script>
 

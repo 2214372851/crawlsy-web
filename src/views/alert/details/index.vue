@@ -96,10 +96,10 @@
 
 <script setup lang="ts">
 import {useRoute} from "vue-router";
-import {onMounted, Ref, ref} from "vue";
-import {Message, PaginationProps, type TableColumnData} from "@arco-design/web-vue";
+import {onMounted, type Ref, ref} from "vue";
+import {Message, type PaginationProps, type TableColumnData} from "@arco-design/web-vue";
 import useLoading from "@/hooks/loading";
-import {alertInfoApi, AlertItem, AlertRecordItem, alertRecordListApi, alertTestApi} from "@/api/modules/alert";
+import {alertInfoApi, type AlertItem, type AlertRecordItem, alertRecordListApi, alertTestApi} from "@/api/modules/alert";
 
 const route = useRoute();
 const {loading, setLoading} = useLoading();

@@ -16,7 +16,7 @@
 
 <script setup lang="ts">
 
-import {ModelRef, onMounted, ref} from "vue";
+import {type ModelRef, onMounted, ref} from "vue";
 import type {SelectOptionData} from "@arco-design/web-vue";
 
 const selectAll = ref(false)

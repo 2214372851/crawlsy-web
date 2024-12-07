@@ -1,13 +1,13 @@
 <template>
   <a-input-tag
       :default-value="tags"
-      @change="changeHandler"
+      @change="changeHandler as any"
       placeholder="请输入对象..."
       unique-value/>
 </template>
 
 <script setup lang="ts">
-import {computed, ModelRef} from "vue";
+import {computed, type ModelRef} from "vue";
 
 const values = defineModel() as ModelRef<string>
 const tags = computed(() => {

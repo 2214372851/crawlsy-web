@@ -30,7 +30,7 @@
 import useUserStore from "@/stores/modules/user";
 import {md5} from "@/utils/crypt";
 import {onMounted, ref} from "vue";
-import {userFeishuApi, UserItem, userProfileApi} from "@/api/modules/user";
+import {userFeishuApi, type UserItem, userProfileApi} from "@/api/modules/user";
 import useLoading from "@/hooks/loading";
 import {Message} from "@arco-design/web-vue";
 
@@ -56,7 +56,7 @@ const fetchData = async () => {
   try {
     const {code, data} = await userProfileApi()
     if (code !== 0) return
-    renderData.value = data;
+    renderData.value = data as UserItem;
   } catch (err) {
     console.error(err)
     // you can report use errorHandler or other

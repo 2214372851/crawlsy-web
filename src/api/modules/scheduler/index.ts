@@ -33,16 +33,16 @@ export const schedulerReloadApi = (taskUid: string) => {
 }
 
 export const schedulerPackageListApi = () => {
-    return get<ApiListResponse<SchedulerPackageItem>>('/scheduler-package/', {}, 10000)
+    return get<ApiResponse<ApiListResponse<SchedulerPackageItem>>>('/scheduler-package/', {}, 10000)
 }
 export const schedulerPackageInstallApi = (packageName: string) => {
-    return post<ApiListResponse<undefined>>('/scheduler-package/', {packageName}, 10000)
+    return post<ApiResponse<undefined>>('/scheduler-package/', {packageName}, 10000)
 }
 export const schedulerPackageUninstallApi = (packageName: string) => {
-    return del<ApiListResponse<undefined>>('/scheduler-package/', {packageName}, 10000)
+    return del<ApiResponse<undefined>>('/scheduler-package/', {packageName}, 10000)
 }
 export const schedulerPackageUpdateApi = (packageName: string) => {
-    return put<ApiListResponse<undefined>>('/scheduler-package/', {}, {packageName}, 10000)
+    return put<ApiResponse<undefined>>('/scheduler-package/', {}, {packageName}, 10000)
 }
 
 

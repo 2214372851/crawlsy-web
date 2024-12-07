@@ -141,7 +141,7 @@ import {onMounted, ref, type Ref, type ShallowRef, useTemplateRef} from "vue";
 import type {SearchOption} from "@/types/global";
 import {alertAddApi, alertDelApi, alertInfoApi, alertListApi, alertUpdateApi} from "@/api/modules/alert";
 import useLoading from "@/hooks/loading";
-import {userOptionApi, UserOptionData} from "@/api/modules/user";
+import {userOptionApi, type UserOptionData} from "@/api/modules/user";
 import router from "@/router";
 
 const userOptions = ref<UserOptionData[]>([])

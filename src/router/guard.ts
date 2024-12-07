@@ -5,7 +5,7 @@ import useUserStore from "@/stores/modules/user";
 
 export default (router: Router) => {
     // 前置
-    router.beforeEach((to, from) => {
+    router.beforeEach((to) => {
         const userStore = useUserStore()
         if (!userStore.accessToken && to.path !== '/login') {
             return '/login'

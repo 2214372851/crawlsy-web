@@ -8,6 +8,7 @@
       <a-grid-item :span="1">
         <a-space size="medium">
           <a-button
+              v-if="addApi"
               type="primary"
               @click="addStartHandle"
               v-permission="[
@@ -19,7 +20,7 @@
             <template #icon>
               <icon-plus/>
             </template>
-            新建
+            新建{{addApi}}
           </a-button>
           <a-button
               status="danger"
@@ -106,8 +107,14 @@
       <template #lastTriggerTime="{ record }">
         <a-tag color="arcoblue">{{ record.lastTriggerTime? record.lastTriggerTime: '未触发' }}</a-tag>
       </template>
+      <template #ip_address="{ record }">
+        <a-tag color="arcoblue">{{ record.ip_address? record.ip_address: '无' }}</a-tag>
+      </template>
       <template #updateTime="{ record }">
         <a-tag color="arcoblue">{{ record.updateTime }}</a-tag>
+      </template>
+      <template #operation_time="{ record }">
+        <a-tag color="arcoblue">{{ record.operation_time }}</a-tag>
       </template>
       <template #optional="{ record }">
         <a-space>
@@ -125,6 +132,7 @@
             查看
           </a-button>
           <a-button
+              v-if="editApi"
               status="normal"
               @click="editStartHandle(record.uid ?? record.id)"
               v-permission="[
@@ -206,12 +214,12 @@ const {
   searchOptions: SearchOption[],
   columns: { title: string, dataIndex?: string, slotName?: string }[],
   dataApi: (params: any) => Promise<ApiResponse<ApiListResponse<any>>>
-  editApi: (id: string, data: any) => Promise<ApiResponse<any>>
-  infoApi: (id: string) => Promise<ApiResponse<any>>
-  addApi: (data: any) => Promise<ApiResponse<any>>
-  delApi: (id: string) => Promise<ApiResponse<any>>
-  editFormRef: any
-  addFormRef: any
+  editApi?: (id: string, data: any) => Promise<ApiResponse<any>>
+  infoApi?: (id: string) => Promise<ApiResponse<any>>
+  addApi?: (data: any) => Promise<ApiResponse<any>>
+  delApi?: (id: string) => Promise<ApiResponse<any>>
+  editFormRef?: any
+  addFormRef?: any
 }>()
 const {loading, setLoading} = useLoading()
 const selectedKeys = ref([])
@@ -282,6 +290,7 @@ const resetData = () => {
 const editStartHandle = async (id: string) => {
   setLoading(true)
   try {
+    if (!infoApi) return
     const {code, data} = await infoApi(id)
     if (code !== 0) return
     editVisible.value = true;
@@ -294,6 +303,7 @@ const editStartHandle = async (id: string) => {
 const deleteHandle = async (id: string) => {
   setLoading(true)
   try {
+    if (!delApi) return
     const {code} = await delApi(id)
     if (code !== 0) return
     await fetchData(pagination.value)
@@ -316,6 +326,7 @@ const deleteBatchHandle = async () => {
   }
   setLoading(true)
   try {
+    if (!delApi) return
     for (const id of selectedKeys.value) {
       const {code} = await delApi(id)
       if (code !== 0) return
@@ -336,6 +347,7 @@ const editHandleCancel = () => {
 }
 const editHandleBeforeOk = async () => {
   try {
+    if (!editFormRef || !editApi) return
     const {code, data} = await editApi(editItemKey.value, editFormValue.value)
     if (code === 3) {
       const fieldsValid: AnyObject = {}
@@ -371,6 +383,7 @@ const addHandleCancel = () => {
 }
 const addHandleBeforeOk = async () => {
   try {
+    if (!addFormRef || !addApi) return
     const {code, data} = await addApi(addFormValue.value)
     if (code === 3) {
       const fieldsValid: AnyObject = {}

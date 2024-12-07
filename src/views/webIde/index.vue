@@ -16,10 +16,9 @@
     <a-modal v-model:visible="uploadVisible" title="上传资源" @before-ok="handelUploadBefore"
              @before-close="handelUploadBefore">
       <a-upload
-
           draggable
           :show-upload-button="true"
-          :custom-request="customRequest"
+          :custom-request="customRequest as any"
           v-model:file-list="fileList"
           />
 </a-modal>
@@ -42,7 +41,7 @@ import {
   resourceUploadApi,
   resourceWriteApi
 } from "@/api/modules/ide";
-import {FileItem, Message, RequestOption, type TreeNodeData} from '@arco-design/web-vue';
+import {type FileItem, Message, type RequestOption, type TreeNodeData} from '@arco-design/web-vue';
 import useLoading from "@/hooks/loading";
 
 const uploadPath = ref('')
@@ -191,7 +190,6 @@ const customRequest = async (option: RequestOption) => {
   } finally {
     setLoading(false)
   }
-
 }
 const handelUploadBefore = async () => {
   if (fileList.value.length > 0) {

@@ -17,12 +17,12 @@
 import {onMounted, type Ref, ref} from 'vue'
 import {taskResultListApi} from "@/api/modules/result";
 import useLoading from "@/hooks/loading";
-import type {PaginationProps} from "@arco-design/web-vue";
+import type {PaginationProps, TableColumnData} from "@arco-design/web-vue";
 
 const {loading, setLoading} = useLoading()
 const {id} = defineProps<{ id: string }>()
-const columns = ref([])
-const renderData = ref([])
+const columns = ref<TableColumnData[]>([])
+const renderData = ref<Record<string, string>[]>([])
 const basePagination = {
   current: 1,
   pageSize: 5
@@ -40,12 +40,13 @@ const fetchData = async (params: any = basePagination) => {
   try {
     const {data, code} = await taskResultListApi(id, params.current, params.pageSize)
     if (code !== 0) return
+    if (!data?.list?.length) return
     const allKeys = new Set();
     data.list.forEach(doc => {
       Object.keys(doc).forEach(key => key === '_id' ? null : allKeys.add(key));
     });
-    columns.value = Array.from(allKeys).map(key => ({'title': key, 'dataIndex': key, 'minWidth': 100}))
-    renderData.value = data.list
+    columns.value = (Array.from(allKeys) as string[]).map(key => ({'title': key, 'dataIndex': key, 'minWidth': 100}))
+    renderData.value = data.list as Record<string, string>[]
     pagination.value.total = data.total
   } catch (e) {
     console.log(e)
