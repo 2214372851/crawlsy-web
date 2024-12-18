@@ -88,6 +88,12 @@
       <template #user="{ record }">
         <a-tag>{{ record.founderUser.username }}</a-tag>
       </template>
+      <template #taskUid="{ record }">
+        <a-tag color="blue">{{ record.taskUid }}</a-tag>
+      </template>
+      <template #spiderUid="{ record }">
+        <a-tag color="blue">{{ record.spiderUid }}</a-tag>
+      </template>
       <template #isTiming="{ record }">
         <a-tag color="green" v-if="record.isTiming">是</a-tag>
         <a-tag color="red" v-else>否</a-tag>

@@ -35,6 +35,11 @@
         <a-descriptions-item label="更新时间">
           <a-tag color="arcoblue">{{ renderData.updateTime }}</a-tag>
         </a-descriptions-item>
+        <a-descriptions-item label="任务标识">
+          <a-tag color="blue">
+            {{ renderData.taskUid }}
+          </a-tag>
+        </a-descriptions-item>
       </a-descriptions>
     </a-spin>
 
@@ -330,7 +335,7 @@ const openLogDrawer = async (nodeUid: string) => {
 const logHandleOk = async () => {
   logsValue.value = '[等待连接中...]'
   try {
-    socket = new WebSocketService(`${import.meta.env.VITE_BASE_URL}logs/${logNodeUid.value}/${renderData.value.taskUid}/?${userStore.accessToken}`)
+    socket = new WebSocketService(`${import.meta.env.VITE_BASE_URL}/logs/${logNodeUid.value}/${renderData.value.taskUid}/?${userStore.accessToken}`)
     socket.onMessage = wsOnMessage
     socket.onError = wsOnError
     socket.onOpen = wsOnOpen

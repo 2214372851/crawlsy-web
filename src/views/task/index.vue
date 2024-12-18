@@ -157,6 +157,10 @@ const columns = [
     minWidth: 90
   },
   {
+    title: '任务标识',
+    slotName: 'taskUid'
+  },
+  {
     title: '创建用户',
     slotName: 'user',
   },

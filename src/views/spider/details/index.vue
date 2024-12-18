@@ -13,6 +13,11 @@
         <a-descriptions-item label="创建用户">
           {{ renderData.founderUser.username }}
         </a-descriptions-item>
+        <a-descriptions-item label="爬虫标识">
+          <a-tag color="blue">
+            {{ renderData.spiderUid }}
+          </a-tag>
+        </a-descriptions-item>
         <a-descriptions-item label="状态">
           <a-tag :color="renderData.status ? 'green' : 'red'">
             {{ renderData.status ? '可用' : '不可用' }}

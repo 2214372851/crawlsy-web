@@ -96,6 +96,10 @@ const columns = [
     minWidth: 90
   },
   {
+    title: '爬虫标识',
+    slotName: 'spiderUid'
+  },
+  {
     title: '创建用户',
     slotName: 'user',
   },
