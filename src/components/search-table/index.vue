@@ -20,7 +20,7 @@
             <template #icon>
               <icon-plus/>
             </template>
-            新建{{addApi}}
+            新建
           </a-button>
           <a-button
               status="danger"
@@ -347,7 +347,7 @@ const editHandleCancel = () => {
 }
 const editHandleBeforeOk = async () => {
   try {
-    if (!editFormRef || !editApi) return
+    if (!editApi) return
     const {code, data} = await editApi(editItemKey.value, editFormValue.value)
     if (code === 3) {
       const fieldsValid: AnyObject = {}
@@ -383,7 +383,7 @@ const addHandleCancel = () => {
 }
 const addHandleBeforeOk = async () => {
   try {
-    if (!addFormRef || !addApi) return
+    if (!addApi) return
     const {code, data} = await addApi(addFormValue.value)
     if (code === 3) {
       const fieldsValid: AnyObject = {}

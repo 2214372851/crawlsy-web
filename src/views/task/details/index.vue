@@ -263,7 +263,10 @@ const fetchData = async () => {
         taskCount.value.failed++
       }
     }
-
+    if (taskCount.value.running === 0) {
+      clearInterval(timer as number)
+      timer = null
+    }
   } catch (err) {
     console.error(err)
     // you can report use errorHandler or other
@@ -327,7 +330,7 @@ const openLogDrawer = async (nodeUid: string) => {
 const logHandleOk = async () => {
   logsValue.value = '[等待连接中...]'
   try {
-    socket = new WebSocketService(`${import.meta.env.VITE_SOCKET_URL}logs/${logNodeUid.value}/${renderData.value.taskUid}/?${userStore.accessToken}`)
+    socket = new WebSocketService(`${import.meta.env.VITE_BASE_URL}logs/${logNodeUid.value}/${renderData.value.taskUid}/?${userStore.accessToken}`)
     socket.onMessage = wsOnMessage
     socket.onError = wsOnError
     socket.onOpen = wsOnOpen
@@ -396,10 +399,10 @@ const openExtend = async (nodeUid: string) => {
 }
 
 onMounted(async () => {
-  await fetchData()
   timer = setInterval(async () => {
     await fetchData()
   }, 15000)
+  await fetchData()
 })
 onUnmounted(() => {
   if (timer) {

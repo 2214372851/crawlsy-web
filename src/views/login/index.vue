@@ -77,8 +77,8 @@ import router from "@/router";
 import {Message} from "@arco-design/web-vue";
 
 const form = reactive({
-  email: 'test@test.test',
-  password: 'Admin123',
+  email: '',
+  password: '',
   isSave: false,
 })
 const visibility = ref(true)
