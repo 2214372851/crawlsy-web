@@ -18,10 +18,10 @@
         <div class="content">
           <div class="login-from-box">
             <div class="login-from-title">
-              Spider Manage
+              Crawlsy
             </div>
             <div class="login-from-sub-title">
-              Login Spider Manage
+              Login Crawlsy
             </div>
             <div class="login-from-error-msg">
               {{ errorMsg }}
@@ -60,7 +60,7 @@
       </a-layout-content>
       <a-layout-footer>
         <a-typography-text type="secondary">
-          Spider Manage By 2024
+          Crawlsy By 2024
         </a-typography-text>
       </a-layout-footer>
     </a-layout>
