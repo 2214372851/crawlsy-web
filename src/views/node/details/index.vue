@@ -435,7 +435,7 @@ const optionBand = useChartOption((isDark) => {
 const optionLoad = useChartOption((isDark) => {
   return {
     title: {
-      text: '负载(%)',
+      text: '负载',
       left: 'left',
       top: 'top',
       textStyle: {

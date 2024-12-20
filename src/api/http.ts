@@ -1,5 +1,5 @@
 import axios from "axios";
-import {Message} from '@arco-design/web-vue';
+import { Notification } from '@arco-design/web-vue';
 import router from "@/router";
 import useUserStore from "@/stores/modules/user";
 
@@ -21,7 +21,7 @@ http.interceptors.request.use(
         return config
     },
     (error) => {
-        Message.error({
+        Notification.error({
             content: "请求失败，请稍后重试",
             duration: 5000
         })
@@ -46,7 +46,7 @@ http.interceptors.response.use(
                     return await http(response.config)
                 } catch (e) {
                     userStore.clearUserInfo()
-                    Message.error({
+                    Notification.error({
                         content: "登录已过期，请重新登录",
                         duration: 5000
                     })
@@ -54,7 +54,7 @@ http.interceptors.response.use(
                     return
                 }
             }
-            Message.error({
+            Notification.error({
                 content: response.data.msg,
                 duration: 5000
             })
@@ -62,7 +62,7 @@ http.interceptors.response.use(
         return response.data
     },
     (error) => {
-        Message.error({
+        Notification.error({
             content: "请求失败，请稍后重试",
             duration: 5000
         })

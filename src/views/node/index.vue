@@ -81,6 +81,7 @@
     <a-modal
         title="节点新建"
         width="600px"
+        :mask-closable="false"
         v-model:visible="addNodeVisible"
         @cancel="addHandleCancel"
         :on-before-ok="addHandleBeforeOk" unmountOnClose>
@@ -106,6 +107,7 @@
     <a-modal
         title="节点修改"
         width="600px"
+        :mask-closable="false"
         v-model:visible="editNodeVisible"
         @cancel="editHandleCancel"
         :on-before-ok="editHandleBeforeOk" unmountOnClose>

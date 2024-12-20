@@ -182,7 +182,7 @@
     </a-spin>
     <result-table :id="resourceId"/>
     <a-drawer
-        width="70%"
+        width="80%"
         title="日志查看器"
         :visible="logVisible"
         @ok="logHandleOk"

@@ -3,7 +3,7 @@
     <a-layout-sider style="height: 100vh; max-width: 400px; width: 30%" class="media-hide">
       <div class="banner">
         <div class="banner-title">
-          Spider Manage
+          Crawlsy
         </div>
         <div class="banner-sub-title">
                     <span class="banner-sub-title-item">

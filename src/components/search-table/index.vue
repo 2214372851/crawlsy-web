@@ -40,12 +40,6 @@
       </a-grid-item>
       <a-grid-item suffix style="margin-left: auto">
         <a-space size="medium">
-          <!--          <a-button>-->
-          <!--            <template #icon>-->
-          <!--              <icon-download/>-->
-          <!--            </template>-->
-          <!--            下载-->
-          <!--          </a-button>-->
           <a-tooltip content="刷新">
             <icon-refresh class="cursor" @click="refreshData" size="18" :disabled="loading"/>
           </a-tooltip>
@@ -167,6 +161,7 @@
     <a-modal
         :title="`${name}编辑`"
         width="600px"
+        :mask-closable="false"
         v-model:visible="editVisible"
         @cancel="editHandleCancel"
         :on-before-ok="editHandleBeforeOk"
@@ -176,6 +171,7 @@
     <a-modal
         :title="`${name}新建`"
         width="600px"
+        :mask-closable="false"
         v-model:visible="addVisible"
         @cancel="addHandleCancel"
         :on-before-ok="addHandleBeforeOk" unmountOnClose>
