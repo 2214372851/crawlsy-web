@@ -1,5 +1,9 @@
 <template>
   <div style="margin-top: 20px">
+    <a-divider :margin="40" orientation="left">任务结果</a-divider>
+    <a-space>
+      <a-button @click="fetchData">刷新</a-button>
+    </a-space>
     <a-table
         :columns="columns"
         :data="renderData"
