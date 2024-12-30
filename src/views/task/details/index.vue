@@ -271,6 +271,10 @@ const fetchData = async () => {
     if (taskCount.value.running === 0) {
       clearInterval(timer as number)
       timer = null
+    } else if (!timer) {
+      timer = setInterval(async () => {
+        await fetchData()
+      }, 15000)
     }
   } catch (err) {
     console.error(err)

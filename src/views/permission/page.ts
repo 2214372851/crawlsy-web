@@ -1,4 +1,4 @@
 export default {
-    title: 'Spider Manage | 权限管理',
+    title: 'Crawlsy | 权限管理',
     layout: true
 }

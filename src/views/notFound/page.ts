@@ -1,4 +1,4 @@
 export default {
-    title: 'Spider Manage | Not Found',
+    title: 'Crawlsy | Not Found',
     layout: false
 }

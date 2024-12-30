@@ -1,4 +1,4 @@
 export default {
-    title: 'Spider Manage | 告警详情',
+    title: 'Crawlsy | 告警详情',
     layout: true
 }

@@ -1,4 +1,4 @@
 export default {
-    title: 'Spider Manage | WEB IDE',
+    title: 'Crawlsy | WEB IDE',
     layout: true
 }

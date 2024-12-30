@@ -1,4 +1,4 @@
 export default {
-    title: 'Spider Manage | 爬虫管理',
+    title: 'Crawlsy | 爬虫管理',
     layout: true
 }

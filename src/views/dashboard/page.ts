@@ -1,4 +1,4 @@
 export default {
-    title: 'Spider Manage | 主控台',
+    title: 'Crawlsy | 主控台',
     layout: true
 }

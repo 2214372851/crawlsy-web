@@ -1,4 +1,4 @@
 export default {
-    title: 'Spider Manage | 节点详情',
+    title: 'Crawlsy | 节点详情',
     layout: true
 }

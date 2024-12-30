@@ -1,4 +1,4 @@
 export default {
-    title: 'Spider Manage | 个人信息',
+    title: 'Crawlsy | 个人信息',
     layout: true
 }

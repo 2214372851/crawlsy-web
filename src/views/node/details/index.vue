@@ -54,25 +54,95 @@
 
     <a-grid :cols="{ xs: 1, sm: 1, md: 2, lg: 2, xl: 2, xxl: 2 }" :colGap="16" :rowGap="16">
       <a-grid-item>
-        <Chart height="300px" :options="optionCpu"/>
+        <div class="chart-container">
+          <a-button 
+            class="maximize-btn"
+            @click="handleMaximize('cpu')"
+          >
+            <icon-fullscreen />
+          </a-button>
+          <Chart height="300px" :options="optionCpu" :auto-resize="true"/>
+        </div>
       </a-grid-item>
       <a-grid-item>
-        <Chart height="300px" :option="optionRam"/>
+        <div class="chart-container">
+          <a-button 
+            class="maximize-btn"
+            @click="handleMaximize('ram')"
+          >
+            <icon-fullscreen />
+          </a-button>
+          <Chart height="300px" :option="optionRam"/>
+        </div>
       </a-grid-item>
       <a-grid-item>
-        <Chart height="300px" :option="optionBand"/>
+        <div class="chart-container">
+          <a-button 
+            class="maximize-btn"
+            @click="handleMaximize('band')"
+          >
+            <icon-fullscreen />
+          </a-button>
+          <Chart height="300px" :option="optionBand"/>
+        </div>
       </a-grid-item>
       <a-grid-item>
-        <Chart height="300px" :option="optionLoad"/>
+        <div class="chart-container">
+          <a-button 
+            class="maximize-btn"
+            @click="handleMaximize('load')"
+          >
+            <icon-fullscreen />
+          </a-button>
+          <Chart height="300px" :option="optionLoad"/>
+        </div>
       </a-grid-item>
     </a-grid>
   </a-card>
+
+  <a-modal
+    v-model:visible="showMaxDialog"
+    @cancel="showMaxDialog = false"
+    fullscreen
+    :footer="false"
+    class="fullscreen-modal"
+  >
+    <template #title>
+      {{ 
+        currentMaxChart === 'cpu' ? 'CPU使用率' :
+        currentMaxChart === 'ram' ? '内存使用率' :
+        currentMaxChart === 'band' ? '带宽' : '负载'
+      }}
+    </template>
+    <div class="chart-fullscreen-container">
+      <div class="chart-wrapper">
+        <Chart 
+          v-if="currentMaxChart === 'cpu'"
+          :options="optionCpu"
+          :auto-resize="true"
+          style="width: 100%; height: 100%"
+        />
+        <Chart 
+          v-if="currentMaxChart === 'ram'"
+          :option="optionRam"
+        />
+        <Chart 
+          v-if="currentMaxChart === 'band'"
+          :option="optionBand"
+        />
+        <Chart 
+          v-if="currentMaxChart === 'load'"
+          :option="optionLoad"
+        />
+      </div>
+    </div>
+  </a-modal>
 </template>
 
 <script setup lang="ts">
 import {useRoute} from "vue-router";
 import useLoading from "@/hooks/loading";
-import {onMounted, onUnmounted, ref} from "vue";
+import {onMounted, onUnmounted, ref, nextTick} from "vue";
 import {type NodeDetailData, nodeInfoApi, type NodeStatus} from "@/api/modules/node";
 import Chart from "@/components/chart/index.vue";
 import useChartOption from "@/hooks/chart-option";
@@ -81,6 +151,7 @@ import {GridComponent, LegendComponent, TitleComponent, ToolboxComponent, Toolti
 import {LineChart, PieChart} from "echarts/charts";
 import {CanvasRenderer} from "echarts/renderers";
 import {Status, type StatusType} from "@/utils/enum";
+import { IconFullscreen } from '@arco-design/web-vue/es/icon';
 
 use([
   TitleComponent,
@@ -119,13 +190,13 @@ const optionCpu = useChartOption((isDark) => {
       }
     },
     backgroundColor: '',
-    color: 'rgb(0, 29,255)',
+    color: '#3760D1',
     tooltip: {
       trigger: 'axis',
       axisPointer: {
         type: 'cross',
         label: {
-          backgroundColor: 'rgba(73,145,251)'
+          backgroundColor: '#3760D1'
         }
       },
       formatter: tooltipFormat
@@ -174,24 +245,7 @@ const optionCpu = useChartOption((isDark) => {
         },
         showSymbol: false,
         areaStyle: {
-          color: {
-            type: 'linear',
-            x: 0,
-            y: 0,
-            x2: 0,
-            y2: 1,
-            colorStops: [
-              {
-                offset: 0.4,
-                color: 'rgb(177,185,248)'
-              },
-              {
-                offset: 1,
-                color: 'rgba(177, 185, 248, 0)'
-              }
-            ],
-            global: false
-          }
+          color: '#DEE3F1'
         },
         emphasis: {
           focus: 'series'
@@ -214,13 +268,13 @@ const optionRam = useChartOption((isDark) => {
       }
     },
     backgroundColor: '',
-    color: 'rgb(0, 29,255)',
+    color: '#5541B8',
     tooltip: {
       trigger: 'axis',
       axisPointer: {
         type: 'cross',
         label: {
-          backgroundColor: 'rgba(73,145,251)'
+          backgroundColor: '#5541B8'
         }
       },
       formatter: tooltipFormat
@@ -270,24 +324,7 @@ const optionRam = useChartOption((isDark) => {
         },
         showSymbol: false,
         areaStyle: {
-          color: {
-            type: 'linear',
-            x: 0,
-            y: 0,
-            x2: 0,
-            y2: 1,
-            colorStops: [
-              {
-                offset: 0.4,
-                color: 'rgb(177,185,248)'
-              },
-              {
-                offset: 1,
-                color: 'rgba(177, 185, 248, 0)'
-              }
-            ],
-            global: false
-          }
+          color: '#E2DFEE'
         },
         emphasis: {
           focus: 'series'
@@ -310,7 +347,7 @@ const optionBand = useChartOption((isDark) => {
       }
     },
     backgroundColor: '',
-    color: ['rgb(0, 29,255)', 'rgb(255, 118, 100)'],
+    color: ['#A45BD4', '#DB9145'],
     tooltip: {
       trigger: 'axis',
       axisPointer: {
@@ -371,24 +408,7 @@ const optionBand = useChartOption((isDark) => {
         },
         showSymbol: false,
         areaStyle: {
-          color: {
-            type: 'linear',
-            x: 0,
-            y: 0,
-            x2: 0,
-            y2: 1,
-            colorStops: [
-              {
-                offset: 0.4,
-                color: 'rgb(177, 185, 248)'
-              },
-              {
-                offset: 1,
-                color: 'rgba(177, 185, 248, 0)'
-              }
-            ],
-            global: false
-          }
+          color: '#ECE2F2'
         },
         emphasis: {
           focus: 'series'
@@ -405,24 +425,7 @@ const optionBand = useChartOption((isDark) => {
         },
         showSymbol: false,
         areaStyle: {
-          color: {
-            type: 'linear',
-            x: 0,
-            y: 0,
-            x2: 0,
-            y2: 1,
-            colorStops: [
-              {
-                offset: 0.4,
-                color: 'rgb(244, 167, 157)'
-              },
-              {
-                offset: 1,
-                color: 'rgba(177, 185, 248, 0)'
-              }
-            ],
-            global: false
-          }
+          color: '#E6DDD5'
         },
         emphasis: {
           focus: 'series'
@@ -662,10 +665,24 @@ const interval = setInterval(async () => {
 setLoading(true)
 onMounted(async () => {
   await fetchData()
+  nextTick(() => {
+    const charts = document.querySelectorAll('.echarts');
+    charts.forEach(chart => {
+      (chart as HTMLElement).style.height = '100%';
+    });
+  });
 })
 onUnmounted(() => {
   clearInterval(interval)
 })
+
+const showMaxDialog = ref(false);
+const currentMaxChart = ref<string>('');
+
+const handleMaximize = (chartType: string) => {
+  currentMaxChart.value = chartType;
+  showMaxDialog.value = true;
+}
 </script>
 
 <style scoped lang="less">
@@ -705,6 +722,48 @@ onUnmounted(() => {
 
   .gray {
     background: #8c8c8c;
+  }
+}
+
+.chart-container {
+  position: relative;
+  height: 300px;
+  
+  .maximize-btn {
+    position: absolute;
+    right: 10px;
+    top: 10px;
+    z-index: 1;
+    opacity: 0.7;
+    transition: opacity 0.3s;
+    
+    &:hover {
+      opacity: 1;
+    }
+  }
+}
+
+.fullscreen-modal {
+  :deep(.arco-modal-body) {
+    height: calc(100vh - 96px);
+    padding: 0;
+  }
+}
+
+.chart-fullscreen-container {
+  height: 100%;
+  width: 100%;
+  position: relative;
+  display: flex;
+  
+  .chart-wrapper {
+    width: 100%;
+    height: 100%;
+    min-height: calc(100vh - 96px);
+    
+    > div {
+      height: 100%;
+    }
   }
 }
 </style>

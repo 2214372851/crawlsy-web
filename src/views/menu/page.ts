@@ -1,4 +1,4 @@
 export default {
-    title: 'Spider Manage | 菜单管理',
+    title: 'Crawlsy | 菜单管理',
     layout: true
 }

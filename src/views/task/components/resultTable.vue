@@ -1,9 +1,21 @@
 <template>
   <div style="margin-top: 20px">
     <a-divider :margin="40" orientation="left">任务结果</a-divider>
-    <a-space>
-      <a-button @click="fetchData">刷新</a-button>
-    </a-space>
+    <div style="display: flex; justify-content: flex-end;margin-bottom: 10px">
+      <a-button
+          @click="fetchData"
+          :loading="loading"
+          v-permission="[
+                {
+                  permission: 'result',
+                  method: 'GET'
+                }
+              ]">
+        <template #icon>
+          <icon-refresh size="18"/>
+        </template>
+      </a-button>
+    </div>
     <a-table
         :columns="columns"
         :data="renderData"
@@ -13,7 +25,7 @@
         @page-size-change="handleChangePageSize"
         stripe
         column-resizable
-        :loading="loading" />
+        :loading="loading"/>
   </div>
 </template>
 

@@ -1,4 +1,4 @@
 export default {
-    title: 'Spider Manage | 登录',
+    title: 'Crawlsy | 登录',
     layout: false
 }
