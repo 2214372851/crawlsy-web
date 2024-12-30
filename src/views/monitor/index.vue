@@ -220,6 +220,12 @@ const sentOption = useChartOption((isDark) => {
         }
       },
     },
+    grid: {
+      left: '3%',
+      right: '6%',
+      bottom: '8%',
+      containLabel: true
+    },
     legend: {
       data: renderData.value.map(node => node.nodeUid),
       bottom: '0%',  // 将图例放置在图表底部
