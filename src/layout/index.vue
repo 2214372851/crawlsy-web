@@ -4,8 +4,8 @@
       <a-page-header :show-back="false">
         <template #title>
           <a-space>
-            <img src="/public/icon.svg" alt="Spider" style="height: 32px">
-            <img src="/public/icon-text.svg" alt="Manage" style="height: 32px" class="media-hide">
+            <img :src="iconUri" alt="" style="height: 32px">
+            Crawlsy
           </a-space>
         </template>
         <template #subtitle>
@@ -114,6 +114,7 @@ import useUserStore from "@/stores/modules/user";
 import PageLayout from "@/layout/page-layout.vue";
 import {md5} from "@/utils/crypt";
 
+const iconUri = "/icon.svg";
 const route = useRoute()
 const appStore = useAppStore()
 const userStore = useUserStore()
