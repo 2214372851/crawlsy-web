@@ -37,7 +37,7 @@
 
     <!-- 节点状态监控 -->
     <a-card title="节点状态监控">
-      <a-grid :cols="{ xs: 2, sm: 2, md: 3, lg: 4 }" :colGap="16" :rowGap="16">
+      <a-grid :cols="{ xs: 2, sm: 2, md: 3, lg: 3 }" :colGap="16" :rowGap="16">
         <a-grid-item v-for="node in monitorData" :key="node.nodeUid">
           <a-card class="node-card" :class="{ 'node-inactive': !isNodeActive(node) }">
             <template #title>
@@ -317,7 +317,7 @@ onMounted(async () => {
 
   .node-title {
     cursor: pointer;
-    max-width: 200px;
+    max-width: 180px;
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;

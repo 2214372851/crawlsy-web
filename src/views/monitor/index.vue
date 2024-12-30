@@ -208,7 +208,13 @@ const sentOption = useChartOption((isDark) => {
       left: 'center',  // 确保标题居中
       textStyle: {
         color: isDark ? '#fff' : '#000'
-      }
+      },
+      axisPointer: {
+        type: 'cross',
+        label: {
+          backgroundColor: '#DB9145'
+        }
+      },
     },
     color: '#DB9145',
     tooltip: {
@@ -216,7 +222,7 @@ const sentOption = useChartOption((isDark) => {
       axisPointer: {
         type: 'cross',
         label: {
-          backgroundColor: 'rgba(73,145,251)'
+          backgroundColor: '#DB9145'
         }
       },
     },
@@ -276,9 +282,24 @@ const recvOption = useChartOption((isDark) => {
     title: {
       text: '下行流量',
       left: 'center',  // 确保标题居中
+      textStyle: {
+        color: isDark ? '#fff' : '#000',
+      },
+      axisPointer: {
+        type: 'cross',
+        label: {
+          backgroundColor: '#A45BD4'
+        }
+      },
     },
     tooltip: {
       trigger: 'axis',
+      axisPointer: {
+        type: 'cross',
+        label: {
+          backgroundColor: '#5541B8'
+        }
+      },
     },
     color: '#A45BD4',
     legend: {
@@ -287,7 +308,7 @@ const recvOption = useChartOption((isDark) => {
       axisPointer: {
         type: 'cross',
         label: {
-          backgroundColor: 'rgba(73,145,251)'
+          backgroundColor: '#A45BD4'
         }
       },
     },
