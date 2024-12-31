@@ -339,7 +339,7 @@ const openLogDrawer = async (nodeUid: string) => {
 const logHandleOk = async () => {
   logsValue.value = '[等待连接中...]'
   try {
-    socket = new WebSocketService(`${import.meta.env.VITE_BASE_URL}/logs/${logNodeUid.value}/${renderData.value.taskUid}/?${userStore.accessToken}`)
+    socket = new WebSocketService(`${import.meta.env.VITE_WS_URL}/logs/${logNodeUid.value}/${renderData.value.taskUid}/?${userStore.accessToken}`)
     socket.onMessage = wsOnMessage
     socket.onError = wsOnError
     socket.onOpen = wsOnOpen

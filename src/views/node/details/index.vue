@@ -1,142 +1,143 @@
 <template>
-  <a-card>
-
-    <a-spin dot :loading="loading" style="width: 100%">
-      <a-descriptions
-          :column="3"
-          :title="renderData.name"
-          layout="inline-vertical"
-          :label-style="{
-            'margin-top': '16px'
-          }">
+  <div>
+    <a-card>
+      <a-spin dot :loading="loading" style="width: 100%">
         <a-descriptions
-            :column="2"
+            :column="3"
+            :title="renderData.name"
             layout="inline-vertical"
             :label-style="{
             'margin-top': '16px'
           }">
-          <a-descriptions-item label="节点状态">
-            <a-tag :color="renderData.status ? 'green' : 'red'">
-              {{ renderData.status ? '可用' : '不可用' }}
-            </a-tag>
-          </a-descriptions-item>
-          <a-descriptions-item label="节点标识">
-            <a-tag>
-              {{ renderData.nodeUid }}
-            </a-tag>
-          </a-descriptions-item>
-          <a-descriptions-item label="创建时间">
-            <a-tag color="arcoblue">{{ renderData.createTime }}</a-tag>
-          </a-descriptions-item>
-          <a-descriptions-item label="更新时间">
-            <a-tag color="arcoblue">{{ renderData.updateTime }}</a-tag>
-          </a-descriptions-item>
+          <a-descriptions
+              :column="2"
+              layout="inline-vertical"
+              :label-style="{
+            'margin-top': '16px'
+          }">
+            <a-descriptions-item label="节点状态">
+              <a-tag :color="renderData.status ? 'green' : 'red'">
+                {{ renderData.status ? '可用' : '不可用' }}
+              </a-tag>
+            </a-descriptions-item>
+            <a-descriptions-item label="节点标识">
+              <a-tag>
+                {{ renderData.nodeUid }}
+              </a-tag>
+            </a-descriptions-item>
+            <a-descriptions-item label="创建时间">
+              <a-tag color="arcoblue">{{ renderData.createTime }}</a-tag>
+            </a-descriptions-item>
+            <a-descriptions-item label="更新时间">
+              <a-tag color="arcoblue">{{ renderData.updateTime }}</a-tag>
+            </a-descriptions-item>
+          </a-descriptions>
         </a-descriptions>
-      </a-descriptions>
-    </a-spin>
-    <a-divider :margin="40" orientation="left">节点任务状态</a-divider>
-    <a-grid v-if="renderData.monitor[renderData.monitor.length - 1]?.tasks.length > 0"
-            :cols="{ xs: 1, sm: 1, md: 2, lg: 3, xl: 3, xxl: 4 }" :colGap="16"
-            :rowGap="16">
-      <a-grid-item v-for="item in renderData.monitor[renderData.monitor.length - 1]?.tasks" :key="item.taskUid">
-        <a-tooltip :content="`${Status[item.status as StatusType].msg}`">
-          <div class="status-card">
+      </a-spin>
+      <a-divider :margin="40" orientation="left">节点任务状态</a-divider>
+      <a-grid v-if="renderData.monitor[renderData.monitor.length - 1]?.tasks.length > 0"
+              :cols="{ xs: 1, sm: 1, md: 2, lg: 3, xl: 3, xxl: 4 }" :colGap="16"
+              :rowGap="16">
+        <a-grid-item v-for="item in renderData.monitor[renderData.monitor.length - 1]?.tasks" :key="item.taskUid">
+          <a-tooltip :content="`${Status[item.status as StatusType].msg}`">
+            <div class="status-card">
             <span class="title">
               {{ item.taskUid }}
             </span>
-            <span :class="`status ${Status[item.status as StatusType].color}`"></span>
+              <span :class="`status ${Status[item.status as StatusType].color}`"></span>
+            </div>
+          </a-tooltip>
+        </a-grid-item>
+      </a-grid>
+
+      <a-divider :margin="40" orientation="left">节点监控</a-divider>
+
+      <a-grid :cols="{ xs: 1, sm: 1, md: 2, lg: 2, xl: 2, xxl: 2 }" :colGap="16" :rowGap="16">
+        <a-grid-item>
+          <div class="chart-container">
+            <a-button
+                class="maximize-btn"
+                @click="handleMaximize('cpu')"
+            >
+              <icon-fullscreen />
+            </a-button>
+            <Chart height="300px" :options="optionCpu" :auto-resize="true"/>
           </div>
-        </a-tooltip>
-      </a-grid-item>
-    </a-grid>
+        </a-grid-item>
+        <a-grid-item>
+          <div class="chart-container">
+            <a-button
+                class="maximize-btn"
+                @click="handleMaximize('ram')"
+            >
+              <icon-fullscreen />
+            </a-button>
+            <Chart height="300px" :option="optionRam"/>
+          </div>
+        </a-grid-item>
+        <a-grid-item>
+          <div class="chart-container">
+            <a-button
+                class="maximize-btn"
+                @click="handleMaximize('band')"
+            >
+              <icon-fullscreen />
+            </a-button>
+            <Chart height="300px" :option="optionBand"/>
+          </div>
+        </a-grid-item>
+        <a-grid-item>
+          <div class="chart-container">
+            <a-button
+                class="maximize-btn"
+                @click="handleMaximize('load')"
+            >
+              <icon-fullscreen />
+            </a-button>
+            <Chart height="300px" :option="optionLoad"/>
+          </div>
+        </a-grid-item>
+      </a-grid>
+    </a-card>
 
-    <a-divider :margin="40" orientation="left">节点监控</a-divider>
-
-    <a-grid :cols="{ xs: 1, sm: 1, md: 2, lg: 2, xl: 2, xxl: 2 }" :colGap="16" :rowGap="16">
-      <a-grid-item>
-        <div class="chart-container">
-          <a-button 
-            class="maximize-btn"
-            @click="handleMaximize('cpu')"
-          >
-            <icon-fullscreen />
-          </a-button>
-          <Chart height="300px" :options="optionCpu" :auto-resize="true"/>
+    <a-modal
+        v-model:visible="showMaxDialog"
+        @cancel="showMaxDialog = false"
+        fullscreen
+        :footer="false"
+        class="fullscreen-modal"
+    >
+      <template #title>
+        {{
+          currentMaxChart === 'cpu' ? 'CPU使用率' :
+              currentMaxChart === 'ram' ? '内存使用率' :
+                  currentMaxChart === 'band' ? '带宽' : '负载'
+        }}
+      </template>
+      <div class="chart-fullscreen-container">
+        <div class="chart-wrapper">
+          <Chart
+              v-if="currentMaxChart === 'cpu'"
+              :options="optionCpu"
+              :auto-resize="true"
+              style="width: 100%; height: 100%"
+          />
+          <Chart
+              v-if="currentMaxChart === 'ram'"
+              :option="optionRam"
+          />
+          <Chart
+              v-if="currentMaxChart === 'band'"
+              :option="optionBand"
+          />
+          <Chart
+              v-if="currentMaxChart === 'load'"
+              :option="optionLoad"
+          />
         </div>
-      </a-grid-item>
-      <a-grid-item>
-        <div class="chart-container">
-          <a-button 
-            class="maximize-btn"
-            @click="handleMaximize('ram')"
-          >
-            <icon-fullscreen />
-          </a-button>
-          <Chart height="300px" :option="optionRam"/>
-        </div>
-      </a-grid-item>
-      <a-grid-item>
-        <div class="chart-container">
-          <a-button 
-            class="maximize-btn"
-            @click="handleMaximize('band')"
-          >
-            <icon-fullscreen />
-          </a-button>
-          <Chart height="300px" :option="optionBand"/>
-        </div>
-      </a-grid-item>
-      <a-grid-item>
-        <div class="chart-container">
-          <a-button 
-            class="maximize-btn"
-            @click="handleMaximize('load')"
-          >
-            <icon-fullscreen />
-          </a-button>
-          <Chart height="300px" :option="optionLoad"/>
-        </div>
-      </a-grid-item>
-    </a-grid>
-  </a-card>
-
-  <a-modal
-    v-model:visible="showMaxDialog"
-    @cancel="showMaxDialog = false"
-    fullscreen
-    :footer="false"
-    class="fullscreen-modal"
-  >
-    <template #title>
-      {{ 
-        currentMaxChart === 'cpu' ? 'CPU使用率' :
-        currentMaxChart === 'ram' ? '内存使用率' :
-        currentMaxChart === 'band' ? '带宽' : '负载'
-      }}
-    </template>
-    <div class="chart-fullscreen-container">
-      <div class="chart-wrapper">
-        <Chart 
-          v-if="currentMaxChart === 'cpu'"
-          :options="optionCpu"
-          :auto-resize="true"
-          style="width: 100%; height: 100%"
-        />
-        <Chart 
-          v-if="currentMaxChart === 'ram'"
-          :option="optionRam"
-        />
-        <Chart 
-          v-if="currentMaxChart === 'band'"
-          :option="optionBand"
-        />
-        <Chart 
-          v-if="currentMaxChart === 'load'"
-          :option="optionLoad"
-        />
       </div>
-    </div>
-  </a-modal>
+    </a-modal>
+  </div>
 </template>
 
 <script setup lang="ts">
